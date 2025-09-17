@@ -23,6 +23,14 @@ def login(request):
 def register(request):
     return render(request, 'gr8tutor/register.html')
     
+@login_required
+def chat_view(request, other_party_id):
+    current_user = request.user
+    other_user = User.objects.get(id=other_party_id)
+    
+sent_messages = Message.objects.filter(sender=current_user, recipient=other_user)
+received_messages = Message.objects.filter(sender=other_user, recipient=current_user)
+
 
 def index(request):
     if request.method == "POST":
