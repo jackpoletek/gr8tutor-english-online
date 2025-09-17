@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from gr8tutor import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('gr8tutor.urls')),  # This includes all URLs from your app
+    path('', include('gr8tutor.urls')),
+    path('chat/<int:other_party_id>/', views.chat_view, name='chat'),
 ]
