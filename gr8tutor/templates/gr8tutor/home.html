@@ -1,0 +1,24 @@
+{% extends "gr8tutor/base.html" %}
+
+{% block title %}Home - Gr8Tutor{% endblock %}
+
+{% block content %}
+<h1>Welcome to Gr8Tutor!</h1>
+<p>Your premier destination for online English tutoring.</p>
+
+<section>
+    <h2>Why Choose Gr8Tutor?</h2>
+    <ul>
+        <li>Certified English tutors</li>
+        <li>Flexible scheduling</li>
+        <li>Personalized lessons</li>
+        <li>Affordable pricing</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Get Started Today</h2>
+    <p>Join hundreds of students who have improved their English skills with our expert tutors.</p>
+    <a href="{% url 'register' %}">Sign Up Now</a>
+</section>
+{% endblock %}
