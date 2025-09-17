@@ -22,6 +22,13 @@ class Tutor(models.Model):
 
     def __str__(self):
         return self.user_profile.user.username
+    
+    def current_students(self):
+        students = []
+        for rship in StudentTutorRelationship.objects.filter(tutor=self,
+                                                             is_active=True):
+            students.append(rship.student)
+        return students
 
 class Student(models.Model):
     user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
@@ -40,3 +47,15 @@ class StudentTutorRelationship(models.Model):
 
     def __str__(self):
         return f"{self.student} - {self.tutor}"
+
+# Messaging between Tutor and Student
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE,
+                               related_name="sent_messages")
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE,
+                                  related_name="received_messages")
+    text = models.TextField()
+    time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"From {self.sender} to {self.recipient} at {self.time}"
