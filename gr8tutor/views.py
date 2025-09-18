@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Message, Tutor, Student, StudentTutorRelationship
@@ -28,7 +29,11 @@ def register(request):
 @login_required
 def chat_view(request, other_party_id):
     current_user = request.user
-    other_user = User.objects.get(id=other_party_id)
+    other_user = get_object_or_404(User, id=other_party_id)
+
+    # Don't allow chatting with yourself
+    if current_user == other_user:
+        raise PermissionDenied("You cannot chat with yourself.")
 
     # Ensure that the current user and other user have a valid relationship
     if not (
@@ -43,6 +48,7 @@ def chat_view(request, other_party_id):
             student__user_profile__user=current_user,
             is_active=True,
         ).exists()
+        or current_user.userprofile.role == 'admin' # Admin can chat with anyone
     ):
         return HttpResponseForbidden("Sorry, you aren't allowed to chat with this user.")
 
