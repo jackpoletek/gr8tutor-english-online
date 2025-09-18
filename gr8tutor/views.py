@@ -34,8 +34,21 @@ def delete_profile(request, user_id):
 # Only the user or admin can delete the account
     if request.user != user_to_delete and request.user.userprofile.role != 'admin':
         raise PermissionDenied("You cannot delete this profile.")
-    user_to_delete()
-    return redirect("home")
+    elif request.user.userprofile.role == "admin":
+        user_to_delete()
+        return redirect("home")
+    else:
+        user_to_delete.delete()
+        return redirect("login")
+
+@login_required
+def admin_user_list(request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden("for admins only.")
+    
+    # For admins only
+    users = User.objects.all()
+    return render(request, "gr8tutor/admin_user_list.html", {"users": users})
 
 @login_required
 def chat_view(request, other_party_id):
