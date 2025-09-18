@@ -12,6 +12,7 @@ def home(request):
 def about(request):
     return render(request, 'gr8tutor/about.html')
 
+@login_required
 def tutors(request):
     return render(request, 'gr8tutor/tutors.html')
 
