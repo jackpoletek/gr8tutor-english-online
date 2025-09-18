@@ -25,7 +25,18 @@ def login(request):
 
 def register(request):
     return render(request, 'gr8tutor/register.html')
-    
+
+
+@login_required
+def delete_profile(request, user_id):
+    user_to_delete = get_object_or_404(User, id=user_id)
+
+# Only the user or admin can delete the account
+    if request.user != user_to_delete and request.user.userprofile.role != 'admin':
+        raise PermissionDenied("You cannot delete this profile.")
+    user_to_delete()
+    return redirect("home")
+
 @login_required
 def chat_view(request, other_party_id):
     current_user = request.user
