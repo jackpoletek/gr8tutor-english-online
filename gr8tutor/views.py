@@ -26,6 +26,8 @@ def login(request):
 def register(request):
     return render(request, 'gr8tutor/register.html')
 
+# Tutor managing a student list
+# List of students
 @login_required
 def tutor_students(request):
     try:
@@ -41,6 +43,22 @@ def tutor_students(request):
                   {"pending": pending,
                    "active": active})
 
+# Confirm a student request
+@login_required
+def confirm_student(request, student_id):
+    try:
+        tutor = request.user.userprofile.tutor
+    except Tutor.DoesNotExist:
+        return HttpResponseForbidden("You must be registered as a tutor.")
+    
+    relationship = get_object_or_404(
+        StudentTutorRelationship, tutor=tutor, student_id=student_id
+    )
+    relationship.is_active = True
+    relationship.save()
+    return redirect("tutor_students")
+
+# Delete a student
 @login_required
 def delete_student(request, student_id):
     try:
@@ -53,6 +71,7 @@ def delete_student(request, student_id):
     relationship.delete()
     return redirect("tutor_students")
 
+# Permission to delete account
 @login_required
 def delete_profile(request, user_id):
     user_to_delete = get_object_or_404(User, id=user_id)
@@ -76,6 +95,7 @@ def admin_user_list(request):
     users = User.objects.all()
     return render(request, "gr8tutor/admin_user_list.html", {"users": users})
 
+# Chat view between Tutor and Student
 @login_required
 def chat_view(request, other_party_id):
     current_user = request.user
@@ -85,7 +105,7 @@ def chat_view(request, other_party_id):
     if current_user == other_user:
         raise PermissionDenied("You cannot chat with yourself.")
 
-    # Ensure that the current user and other user have a valid relationship
+    # Ensure that the current user and other user have a relationship
     if not (
         StudentTutorRelationship.objects.get(
             tutor__user_profile__user=current_user,
