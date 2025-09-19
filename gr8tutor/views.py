@@ -72,6 +72,25 @@ def delete_student(request, student_id):
     relationship.delete()
     return redirect("tutor_students")
 
+# Student sending request to Tutor
+@login_required
+def request_tutor(request, tutor_id):
+    try:
+        student = request.user.userprofile.student
+    except Student.DoesNotExist:
+        return HttpResponseForbidden("You must be registered as a student.")
+    
+    relationship, created = StudentTutorRelationship.objects.get_or_create(
+        student=student, tutor=tutor, defaults={'is_active': False}
+    )
+
+    message = "Request sent to tutor."
+
+    return render(request, "gr8tutor/request_status.html", {
+        "message": message,
+        "tutor": tutor
+    })
+
 # Permission to delete account
 @login_required
 def delete_profile(request, user_id):

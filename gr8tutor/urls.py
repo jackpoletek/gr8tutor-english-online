@@ -14,6 +14,8 @@ urlpatterns = [
          name='confirm_student'),
     path('delete-student/<int:student_id>/', views.delete_student,
          name='delete_student'),
+    path('request-tutor/<int:tutor_id>/', views.request_tutor,
+         name='request_tutor'),
 
     # Endpoints
 
