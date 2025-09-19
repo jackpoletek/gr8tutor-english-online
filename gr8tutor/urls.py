@@ -9,6 +9,11 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('register/', views.register, name='register'),
     path('contact/', views.contact, name='contact'),
+    path('my-students/', views.tutor_students, name='tutor_students'),
+    path('confirm-student/<int:student_id>/', views.confirm_student,
+         name='confirm_student'),
+    path('delete-student/<int:student_id>/', views.delete_student,
+         name='delete_student'),
 
     # Endpoints
 

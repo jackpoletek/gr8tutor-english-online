@@ -40,13 +40,14 @@ class Student(models.Model):
 class StudentTutorRelationship(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('student', 'tutor')
 
     def __str__(self):
-        return f"{self.student} - {self.tutor}"
+        status = "Active" if self.is_active else "Pending"
+        return f"{self.student} - {self.tutor} ({status})"
 
 # Messaging between Tutor and Student
 class Message(models.Model):

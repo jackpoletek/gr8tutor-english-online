@@ -26,6 +26,32 @@ def login(request):
 def register(request):
     return render(request, 'gr8tutor/register.html')
 
+@login_required
+def tutor_students(request):
+    try:
+        tutor = request.user.userprofile.tutor
+    except StudentTutorRelationship.DoesNotExist:
+        return HttpResponse("You must be registered as a tutor.")
+    
+    pending = StudentTutorRelationship.objects.filter(tutor=tutor,
+                                                      is_active=False)
+    active = StudentTutorRelationship.objects.filter(tutor=tutor,
+                                                     is_active=True)
+    return render(request, "gr8tutor/tutor_students.html",
+                  {"pending": pending,
+                   "active": active})
+
+@login_required
+def delete_student(request, student_id):
+    try:
+        tutor = request.user.userprofile.tutor
+    except Tutor.DoesNotExist:
+        return HttpResponse("You must be registered as a tutor.")
+    
+    relationship = get_object_or_404(StudentTutorRelationship,
+                                     tutor=tutor, student__id=student_id,)
+    relationship.delete()
+    return redirect("tutor_students")
 
 @login_required
 def delete_profile(request, user_id):
