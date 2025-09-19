@@ -26,6 +26,7 @@ def login(request):
 def register(request):
     return render(request, 'gr8tutor/register.html')
 
+
 # Tutor managing a student list
 # List of students
 @login_required

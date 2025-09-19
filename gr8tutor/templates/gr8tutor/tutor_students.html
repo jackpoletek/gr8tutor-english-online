@@ -1,0 +1,26 @@
+<h2>My Students</h2>
+
+<h3>Pending Requests</h3>
+<ul>
+    {% for r in pending_students %}
+    <li>
+        {{ r.student.user_profile.user.username }}
+        <a href="{% url 'confirm_student' r.student.id %}"> Confirm</a>
+        <a href="{% url 'delete_student' r.student.id %}"> Reject</a>
+    </li>
+    {% empty %}
+    <li>No pending requests.</li>
+    {% endfor %}
+</ul>
+
+<h3>Active Students</h3>
+<ul>
+    {% for r in active_students %}
+    <li>
+        {{ r.student.user_profile.user.username }}
+        <a href="{% url 'delete_student' r.student.id %}"> Delete</a>
+    </li>
+    {% empty %}
+    <li>No active students.</li>
+    {% endfor %}
+</ul>
