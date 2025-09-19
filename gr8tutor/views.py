@@ -80,16 +80,15 @@ def request_tutor(request, tutor_id):
     except Student.DoesNotExist:
         return HttpResponseForbidden("You must be registered as a student.")
     
+    tutor = get_object_or_404(Tutor, id=tutor_id)
+    
     relationship, created = StudentTutorRelationship.objects.get_or_create(
         student=student, tutor=tutor, defaults={'is_active': False}
     )
 
     message = "Request sent to tutor."
 
-    return render(request, "gr8tutor/request_status.html", {
-        "message": message,
-        "tutor": tutor
-    })
+    return HttpResponse(message)
 
 # Permission to delete account
 @login_required

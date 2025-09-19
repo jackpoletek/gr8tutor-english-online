@@ -10,4 +10,16 @@
     <h2>Tutor Profiles</h2>
     <p>Information about our tutors will be displayed here.</p>
 </section>
+
+<h2>Available Tutors</h2>
+<ul>
+    {% for tutor in tutors %}
+    <li>
+        {{ tutor.user_profile.user.username }} - {{ tutor.subject }}
+        <a href="{% url 'request_tutor' tutor.id %}">Request Tutor</a>
+    </li>
+    {% empty %}
+    <li>No tutors available.</li>
+    {% endfor %}
+</ul>
 {% endblock %}
