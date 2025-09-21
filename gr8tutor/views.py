@@ -126,13 +126,13 @@ def chat_view(request, other_party_id):
 
     # Ensure that the current user and other user have a relationship
     if not (
-        StudentTutorRelationship.objects.get(
+        StudentTutorRelationship.objects.filter(
             tutor__user_profile__user=current_user,
             student__user_profile__user=other_user,
             is_active=True,
         ).exists()
         or
-        StudentTutorRelationship.objects.get(
+        StudentTutorRelationship.objects.filter(
             tutor__user_profile__user=other_user,
             student__user_profile__user=current_user,
             is_active=True,
