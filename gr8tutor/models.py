@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 class UserProfile(models.Model):
@@ -29,6 +30,12 @@ class Tutor(models.Model):
                                                              is_active=True):
             students.append(rship.student)
         return students
+    
+    def save(self, *args, **kwargs):
+        if (User.objects.filter(email=self.user_profile.user.email).exists()
+            and self.user_profile.role != "tutor"):
+            raise ValidationError("This email is already registered.")
+        super().save(*args, **kwargs)
 
 class Student(models.Model):
     user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
@@ -36,6 +43,12 @@ class Student(models.Model):
 
     def __str__(self):
         return self.user_profile.user.username
+    
+    def save(self, *args, **kwargs):
+        if (User.objects.filter(email=self.user_profile.user.email).exists()
+            and self.user_profile.role != "student"):
+            raise ValidationError("This email is already registered.")
+        super().save(*args, **kwargs)
 
 class StudentTutorRelationship(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)

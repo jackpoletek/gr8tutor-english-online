@@ -3,12 +3,6 @@ from django.contrib import admin
 # Register your models here.
 from .models import UserProfile, Tutor, Student, StudentTutorRelationship, Message
 
-admin.site.register(UserProfile)
-admin.site.register(Tutor)
-admin.site.register(Student)
-admin.site.register(StudentTutorRelationship)
-admin.site.register(Message)
-
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ("user", "role")
@@ -40,4 +34,3 @@ class MessageAdmin(admin.ModelAdmin):
     list_display = ("sender", "recipient", "time", "text")
     search_fields = ("sender__username", "recipient__username", "text")
     list_filter = ("time",)
-    
