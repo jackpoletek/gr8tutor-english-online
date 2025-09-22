@@ -7,8 +7,8 @@ from django.contrib.auth.models import User
 from .models import Message, Tutor, Student, StudentTutorRelationship
 
 # Create your views here.
-def home(request):
-    return render(request, 'gr8tutor/home.html')
+def index(request):
+    return render(request, 'gr8tutor/index.html')
 
 def about(request):
     return render(request, 'gr8tutor/about.html')
@@ -105,7 +105,7 @@ def delete_profile(request, user_id):
     
     if request.user.userprofile.role == "admin":  # Admin deleting any user
         user_to_delete.delete()
-        return redirect("home")
+        return redirect("index")
 
 @login_required
 def admin_user_list(request):
