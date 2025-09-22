@@ -1,12 +1,19 @@
 {% load static %}
 
+{% url 'index' as home_url %}
+{% url 'about' as about_url %}
+{% url 'tutors' as tutors_url %}
+{% url 'contact' as contact_url %}
+{% url 'login' as login_url %}
+{% url 'register' as register_url %}
+
 <!DOCTYPE html><html lang="en">
     
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Gr8Tutor - English Online Tutoring{% endblock %}</title>
-    
+
         <meta name="description" content="Gr8Tutor - Your go-to platform for online English tutoring. Connect with expert tutors and enhance your language skills
         from the comfort of your home.">
         <meta name="keywords" content="English tutoring, online English lessons, learn English, English tutors, language learning, online education,
@@ -26,7 +33,7 @@
         
         <!-- Custom CSS -->
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    </head>
+</head>
 
     <body>
     <header>
@@ -53,4 +60,6 @@
 
     <footer>
         <p>&copy; 2025 Gr8Tutor - English Online Tutoring. All rights reserved.</p>
-    </footer></body></html>
+    </footer>
+    </body>
+</html>

@@ -1,0 +1,23 @@
+{% extends "gr8tutor/base.html" %}
+
+{% block title %}Logout - Gr8Tutor{% endblock %}
+
+{% block content %}
+<div>
+    <h1>You have been logged out</h1>
+
+    <div>
+        <p>Thank you for using Gr8Tutor. You have successfully logged out of your account.</p>
+    </div>
+
+    <div>
+        <a href="{% url 'login' %}">
+            Log In Again
+        </a>
+    </div>
+
+    <div>
+        <p>Or <a href="{% url 'home' %}">return to homepage</a></p>
+    </div>
+</div>
+{% endblock %}

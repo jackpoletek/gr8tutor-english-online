@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from django.core.exceptions import PermissionDenied
@@ -25,6 +27,9 @@ def login(request):
 
 def register(request):
     return render(request, 'gr8tutor/register.html')
+
+def logout(request):
+    return render(request, 'gr8tutor/logout.html')
 
 
 # Tutor managing a student list
@@ -159,5 +164,7 @@ def chat_view(request, other_party_id):
     return render(request, "gr8tutor/chat.html", {"messages": messages,
                                                   "other_user": other_user})
 
-
+def logout_view(request):
+    logout(request)
+    return render(request, 'gr8tutor/logout.html')
 
