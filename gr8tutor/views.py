@@ -98,12 +98,14 @@ def delete_profile(request, user_id):
 # Only the user or admin can delete the account
     if request.user != user_to_delete and request.user.userprofile.role != 'admin':
         raise PermissionDenied("You cannot delete this profile.")
-    elif request.user.userprofile.role == "admin":
-        user_to_delete()
-        return redirect("home")
-    else:
+    
+    if request.user == user_to_delete:  # User deleting themselves
         user_to_delete.delete()
         return redirect("login")
+    
+    if request.user.userprofile.role == "admin":  # Admin deleting any user
+        user_to_delete.delete()
+        return redirect("home")
 
 @login_required
 def admin_user_list(request):

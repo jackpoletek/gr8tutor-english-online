@@ -12,11 +12,12 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     
-    def unique_role(self, role):
+    def unique_role(self, new_role):
         if User.objects.filter(email=self.user.email).exists() \
-           and self.role != role:
+           and self.role != new_role:
             raise ValidationError(
-                f"This email is already registered ({self.role}).")
+                f"You are already registered as {self.role} and cannot register as {new_role}."
+                )
 
     def __str__(self):
         return f"{self.user.username} ({self.role})"
