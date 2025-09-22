@@ -11,6 +11,12 @@ class UserProfile(models.Model):
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    
+    def unique_role(self, role):
+        if User.objects.filter(email=self.user.email).exists() \
+           and self.role != role:
+            raise ValidationError(
+                f"This email is already registered ({self.role}).")
 
     def __str__(self):
         return f"{self.user.username} ({self.role})"
@@ -32,9 +38,7 @@ class Tutor(models.Model):
         return students
     
     def save(self, *args, **kwargs):
-        if (User.objects.filter(email=self.user_profile.user.email).exists()
-            and self.user_profile.role != "tutor"):
-            raise ValidationError("This email is already registered.")
+        self.user_profile.unique_role("tutor")
         super().save(*args, **kwargs)
 
 class Student(models.Model):
@@ -45,9 +49,7 @@ class Student(models.Model):
         return self.user_profile.user.username
     
     def save(self, *args, **kwargs):
-        if (User.objects.filter(email=self.user_profile.user.email).exists()
-            and self.user_profile.role != "student"):
-            raise ValidationError("This email is already registered.")
+        self.user_profile.unique_role("student")
         super().save(*args, **kwargs)
 
 class StudentTutorRelationship(models.Model):
@@ -57,6 +59,7 @@ class StudentTutorRelationship(models.Model):
 
     class Meta:
         unique_together = ('student', 'tutor')
+        ordering = ['-is_active', 'tutor__user_profile__user__username']
 
     def __str__(self):
         status = "Active" if self.is_active else "Pending"
