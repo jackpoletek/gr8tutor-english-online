@@ -5,18 +5,20 @@ __pycache__/
 *.pyd
 *.sqlite3
 *.db
-env.py
 
 # Virtual environment
 venv/
 .venv/
 env/
+.env
+.env.py
 
 # Django
 *.log
 db.sqlite3
 media/
 staticfiles/
+gr8tutor_english_online/settings.py
 
 # IDE/editor
 .vscode/
