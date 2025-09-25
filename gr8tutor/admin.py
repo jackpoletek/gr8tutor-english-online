@@ -15,7 +15,6 @@ class TutorAdmin(admin.ModelAdmin):
     list_display = ("user_profile", "subject", "hourly_rate")
     search_fields = ("user_profile__user__username", "subject")
 
-
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = ("user_profile", "goals")

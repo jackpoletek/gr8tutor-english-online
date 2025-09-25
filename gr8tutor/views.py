@@ -1,8 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
 from django.shortcuts import redirect
-from django.http import HttpResponse
-from django.http import HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -15,21 +14,10 @@ def index(request):
 def about(request):
     return render(request, 'gr8tutor/about.html')
 
-@login_required
-def tutors(request):
-    return render(request, 'gr8tutor/tutors.html')
-
 def contact(request):
     return render(request, 'gr8tutor/contact.html')
 
-def login(request):
-    return render(request, 'gr8tutor/login.html')
-
-def register(request):
-    return render(request, 'gr8tutor/register.html')
-
-def logout(request):
-    return render(request, 'gr8tutor/logout.html')
+# Authentication views are handled by allauth
 
 
 # Tutor managing a student list
@@ -38,16 +26,27 @@ def logout(request):
 def tutor_students(request):
     try:
         tutor = request.user.userprofile.tutor
-    except StudentTutorRelationship.DoesNotExist:
-        return HttpResponse("You must be registered as a tutor.")
+    except Tutor.DoesNotExist:
+        return HttpResponseForbidden("You must be registered as a tutor.")
     
-    pending = StudentTutorRelationship.objects.filter(tutor=tutor,
-                                                      is_active=False)
-    active = StudentTutorRelationship.objects.filter(tutor=tutor,
-                                                     is_active=True)
-    return render(request, "gr8tutor/tutor_students.html",
-                  {"pending": pending,
-                   "active": active})
+    pending = StudentTutorRelationship.objects.filter(
+        tutor=tutor, is_active=False
+        )
+    active = StudentTutorRelationship.objects.filter(
+        tutor=tutor, is_active=True
+        )
+    
+    return render(
+        request, "gr8tutor/tutor_students.html",
+        {"pending": pending, "active": active}
+                  )
+
+@login_required
+def tutors(request):
+    tutors = Tutor.objects.all()
+    return render(
+        request, "gr8tutor/tutors.html", {"tutors": tutors}
+        )
 
 # Confirm a student request
 @login_required
@@ -70,10 +69,11 @@ def delete_student(request, student_id):
     try:
         tutor = request.user.userprofile.tutor
     except Tutor.DoesNotExist:
-        return HttpResponse("You must be registered as a tutor.")
+        return HttpResponseForbidden("You must be registered as a tutor.")
     
-    relationship = get_object_or_404(StudentTutorRelationship,
-                                     tutor=tutor, student__id=student_id,)
+    relationship = get_object_or_404(
+        StudentTutorRelationship, tutor=tutor, student__id=student_id
+        )
     relationship.delete()
     return redirect("tutor_students")
 
@@ -101,25 +101,27 @@ def delete_profile(request, user_id):
     user_to_delete = get_object_or_404(User, id=user_id)
 
 # Only the user or admin can delete the account
-    if request.user != user_to_delete and request.user.userprofile.role != 'admin':
+    if request.user != user_to_delete and not request.user.is_staff:
         raise PermissionDenied("You cannot delete this profile.")
     
-    if request.user == user_to_delete:  # User deleting themselves
-        user_to_delete.delete()
-        return redirect("login")
+    user_to_delete.delete()
     
-    if request.user.userprofile.role == "admin":  # Admin deleting any user
-        user_to_delete.delete()
+    if request.user == user_to_delete:  # User deleting themselves
+        logout(request)
+        return redirect("account_login") # allauth login page
+    else:
         return redirect("index")
 
 @login_required
 def admin_user_list(request):
     if not request.user.is_staff:
-        return HttpResponseForbidden("for admins only.")
+        return HttpResponseForbidden("For admins only.")
     
     # For admins only
     users = User.objects.all()
-    return render(request, "gr8tutor/admin_user_list.html", {"users": users})
+    return render(
+        request, "gr8tutor/admin_user_list.html", {"users": users}
+        )
 
 # Chat view between Tutor and Student
 @login_required
@@ -132,7 +134,7 @@ def chat_view(request, other_party_id):
         raise PermissionDenied("You cannot chat with yourself.")
 
     # Ensure that the current user and other user have a relationship
-    if not (
+    allowed = (
         StudentTutorRelationship.objects.filter(
             tutor__user_profile__user=current_user,
             student__user_profile__user=other_user,
@@ -144,27 +146,33 @@ def chat_view(request, other_party_id):
             student__user_profile__user=current_user,
             is_active=True,
         ).exists()
-        or current_user.userprofile.role == 'admin' # Admin can chat with anyone
-    ):
+        or current_user.is_staff # Admin can chat with anyone
+    )
+    if not allowed:
         return HttpResponseForbidden("Sorry, you aren't allowed to chat with this user.")
 
-    sent_messages = Message.objects.filter(sender=current_user,
-                                           recipient=other_user)
-    received_messages = Message.objects.filter(sender=other_user,
-                                               recipient=current_user)
+    sent_messages = Message.objects.filter(
+        sender=current_user, recipient=other_user
+        )
+    received_messages = Message.objects.filter(
+        sender=other_user, recipient=current_user
+        )
     messages = sent_messages.union(received_messages).order_by("time")
 
     if request.method == "POST":
         text = request.POST.get("message")
         if text:
-            Message.objects.create(sender=current_user, recipient=other_user,
-                                   text=text)
-            return redirect("chat", other_party_id=other_user.id)
+            Message.objects.create(
+                sender=current_user, recipient=other_user, text=text
+                )
+            return redirect(
+                "chat", other_party_id=other_user.id
+                )
 
-    return render(request, "gr8tutor/chat.html", {"messages": messages,
-                                                  "other_user": other_user})
+    return render(
+        request, "gr8tutor/chat.html", {"messages": messages, "other_user": other_user}
+        )
 
 def logout_view(request):
     logout(request)
     return render(request, 'gr8tutor/logout.html')
-

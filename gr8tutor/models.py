@@ -13,8 +13,11 @@ class UserProfile(models.Model):
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     
     def unique_role(self, new_role):
-        if User.objects.filter(email=self.user.email).exists() \
-           and self.role != new_role:
+        # Admin can be both tutor and student
+        if self.role == "admin":
+            return
+        # Student cannot be tutor and vice versa
+        if self.role != new_role:
             raise ValidationError(
                 f"You are already registered as {self.role} and cannot register as {new_role}."
                 )
