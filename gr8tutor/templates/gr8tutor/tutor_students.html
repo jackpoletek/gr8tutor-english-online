@@ -1,26 +1,55 @@
-<h2>My Students</h2>
+{% extends "gr8tutor/base.html" %}
 
-<h3>Pending Requests</h3>
-<ul>
-    {% for r in pending_students %}
-    <li>
-        {{ r.student.user_profile.user.username }}
-        <a href="{% url 'confirm_student' r.student.id %}"> Confirm</a>
-        <a href="{% url 'delete_profile' r.student.id %}"> Reject</a>
-    </li>
-    {% empty %}
-    <li>No pending requests.</li>
-    {% endfor %}
-</ul>
+{% block title %}My Students - Gr8Tutor{% endblock %}
 
-<h3>Active Students</h3>
-<ul>
-    {% for r in active_students %}
-    <li>
-        {{ r.student.user_profile.user.username }}
-        <a href="{% url 'delete_profile' r.student.id %}"> Delete</a>
-    </li>
-    {% empty %}
-    <li>No active students.</li>
-    {% endfor %}
-</ul>
+{% block content %}
+<!-- Hero Section -->
+<section class="hero text-white text-center">
+    <div class="container">
+        <h1 class="display-5 fw-bold">My Students</h1>
+        <p class="lead">Manage your tutoring relationships and active sessions.</p>
+    </div>
+</section>
+
+<!-- Student Management Tabs -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <!-- Pending Requests -->
+        <h2 class="fw-bold mb-4">Pending Requests</h2>
+        {% if pending_students %}
+        <ul class="list-group mb-5 shadow-sm">
+            {% for r in pending_students %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ r.student.user_profile.user.username }} ({{ r.subject }})</span>
+                <div>
+                    <a href="{% url 'confirm_student' r.student.id %}" class="btn btn-sm btn-success me-2">Confirm</a>
+                    <a href="{% url 'delete_profile' r.student.id %}" class="btn btn-sm btn-outline-danger">Reject</a>
+                </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted">No pending requests.</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <!-- Active Students -->
+        <h2 class="fw-bold mb-4">Active Students</h2>
+        {% if active_students %}
+        <ul class="list-group shadow-sm">
+            {% for r in active_students %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ r.student.user_profile.user.username }}</span>
+                <div>
+                    <a href="{% url 'chat' r.student.id %}" class="btn btn-sm btn-primary me-2">Message</a>
+                    <a href="{% url 'delete_profile' r.student.id %}"
+                        class="btn btn-sm btn-outline-secondary">Remove</a>
+                </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted">No active students.</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

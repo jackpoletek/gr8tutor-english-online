@@ -3,22 +3,103 @@
 {% block title %}Home - Gr8Tutor{% endblock %}
 
 {% block content %}
-<h1>Welcome to Gr8Tutor!</h1>
-<p>Your premier destination for online English tutoring.</p>
-
-<section>
-    <h2>Why Choose Gr8Tutor?</h2>
-    <ul>
-        <li>Certified English tutors</li>
-        <li>Flexible schedulling</li>
-        <li>Personalised lessons</li>
-        <li>Affordable pricing</li>
-    </ul>
+<!-- Hero Section -->
+<section class="hero text-white text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">Learn English with Confidence</h1>
+        <p class="lead mb-4">Connect with certified tutors, improve your skills, and achieve your goals — all from home.
+        </p>
+        <a href="{% url 'register' %}" class="btn btn-secondary rounded-pill px-5 py-3 me-3">Get Started</a>
+        <a href="{% url 'tutors' %}" class="btn btn-outline-light rounded-pill px-5 py-3">Meet Tutors</a>
+    </div>
 </section>
 
-<section>
-    <h2>Get Started Today</h2>
-    <p>Join hundreds of students who have improved their English skills with our expert tutors.</p>
-    <a href="{% url 'register' %}">Register Now</a>
+<!-- Features / Services -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Why Choose Gr8Tutor?</h2>
+            <p class="text-muted">We make learning English simple, effective, and enjoyable.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="service-item h-100 shadow-sm p-4 text-center rounded">
+                    <i class="fas fa-user-check fa-2x text-primary mb-3"></i>
+                    <h5>Certified Tutors</h5>
+                    <p class="small text-muted">All our tutors are qualified and experienced in teaching ESL students.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="service-item h-100 shadow-sm p-4 text-center rounded">
+                    <i class="fas fa-calendar-alt fa-2x text-primary mb-3"></i>
+                    <h5>Flexible Scheduling</h5>
+                    <p class="small text-muted">Book lessons at times that work best for you — no rigid timetables.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="service-item h-100 shadow-sm p-4 text-center rounded">
+                    <i class="fas fa-comments fa-2x text-primary mb-3"></i>
+                    <h5>Personalized Lessons</h5>
+                    <p class="small text-muted">Custom sessions tailored to your level, goals, and interests.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="service-item h-100 shadow-sm p-4 text-center rounded">
+                    <i class="fas fa-tags fa-2x text-primary mb-3"></i>
+                    <h5>Affordable Pricing</h5>
+                    <p class="small text-muted">High-quality tutoring at rates accessible to students and families.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Preview -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="{% static 'img/about.jpg' %}" alt="About Gr8Tutor" class="img-fluid rounded shadow-sm">
+            </div>
+            <div class="col-lg-6">
+                <h2 class="fw-bold">Empowering Students Since 2025</h2>
+                <p>Gr8Tutor was founded with a mission: to make high-quality English education accessible to learners
+                    worldwide. We believe language learning should be engaging, personal, and empowering.</p>
+                <p>Our platform connects students with passionate, certified tutors who are committed to helping you
+                    succeed — whether you're preparing for exams, improving conversation skills, or advancing your
+                    career.</p>
+                <a href="{% url 'about' %}" class="btn btn-primary rounded-pill mt-3">Learn More About Us</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery of Tutors / Lessons -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Our Tutoring in Action</h2>
+            <p class="text-muted">A glimpse into real lessons and tutor-student connections.</p>
+        </div>
+        <div class="gallery">
+            <img src="{% static 'img/team-1.jpg' %}" alt="Tutor session">
+            <img src="{% static 'img/team-2.jpg' %}" alt="Online lesson">
+            <img src="{% static 'img/team-3.jpg' %}" alt="English practice">
+            <img src="{% static 'img/team-4.jpg' %}" alt="Tutor and student">
+            <img src="{% static 'img/course-1.jpg' %}" alt="Class materials">
+            <img src="{% static 'img/course-2.jpg' %}" alt="Interactive learning">
+        </div>
+    </div>
+</section>
+
+<!-- CTA: Get Started -->
+<section class="py-5 bg-primary text-white text-center">
+    <div class="container">
+        <h2 class="display-6 fw-semibold mb-3">Ready to Improve Your English?</h2>
+        <p class="mb-4 opacity-75">Join hundreds of students who have boosted their confidence and fluency with
+            Gr8Tutor.</p>
+        <a href="{% url 'register' %}" class="btn btn-light btn-lg rounded-pill px-5">Start Learning Today</a>
+    </div>
 </section>
 {% endblock %}

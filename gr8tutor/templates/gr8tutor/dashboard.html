@@ -1,24 +1,109 @@
 {% extends "gr8tutor/base.html" %}
-{% block title %}Dashboard{% endblock %}
+
+{% block title %}Dashboard - Gr8Tutor{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h1>Welcome, {{ user.username }}!</h1>
+<!-- Hero Section -->
+<section class="hero text-white text-center">
+    <div class="container">
+        <h1 class="display-5 fw-bold">Welcome back, {{ user.username }}!</h1>
+        <p class="lead">
+            {% if user.userprofile.role == "student" %}
+            Ready to improve your English? Let’s continue your learning journey.
+            {% elif user.userprofile.role == "tutor" %}
+            Manage your students and schedule your next session.
+            {% else %}
+            Welcome to the admin panel.
+            {% endif %}
+        </p>
+    </div>
+</section>
 
-    {% if user.userprofile.role == "student" %}
-    <p>You are logged in as a <strong>Student</strong>.</p>
-    <a href="{% url 'tutors' %}" class="btn btn-success">Find Tutors</a>
+<!-- Dashboard Content -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Student View -->
+                {% if user.userprofile.role == "student" %}
+                <div class="card border-primary shadow-sm mb-4">
+                    <div class="card-body text-center p-5">
+                        <i class="fas fa-user-graduate fa-3x text-primary mb-4"></i>
+                        <h2 class="h4 mb-3">Student Dashboard</h2>
+                        <p class="text-muted mb-4">You're on the path to mastering English. Keep going!</p>
+                        <a href="{% url 'tutors' %}" class="btn btn-primary btn-lg px-5 rounded-pill">Find a Tutor</a>
+                    </div>
+                </div>
 
-    {% elif user.userprofile.role == "tutor" %}
-    <p>You are logged in as a <strong>Tutor</strong>.</p>
-    <a href="{% url 'tutor_students' %}" class="btn btn-info">View My Students</a>
+                <!-- Recent Activity -->
+                <div class="bg-white p-4 rounded shadow-sm">
+                    <h3 class="h5 border-bottom pb-3 mb-4">Recent Activity</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Next Lesson: Conversation Practice</span>
+                            <small class="text-muted">Tomorrow, 6:00 PM</small>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Homework Feedback</span>
+                            <small class="text-success">Received</small>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Messages</span>
+                            <small class="text-primary">2 New</small>
+                        </li>
+                    </ul>
+                </div>
 
-    {% elif user.userprofile.role == "admin" %}
-    <p>You are logged in as an <strong>Admin</strong>.</p>
-    <a href="{% url 'admin_user_list' %}" class="btn btn-warning">Manage Users</a>
+                <!-- Tutor View -->
+                {% elif user.userprofile.role == "tutor" %}
+                <div class="card border-primary shadow-sm mb-4">
+                    <div class="card-body text-center p-5">
+                        <i class="fas fa-chalkboard-teacher fa-3x text-primary mb-4"></i>
+                        <h2 class="h4 mb-3">Tutor Dashboard</h2>
+                        <p class="text-muted mb-4">Manage your students and grow your teaching impact.</p>
+                        <a href="{% url 'tutor_students' %}" class="btn btn-primary btn-lg px-5 rounded-pill">View My
+                            Students</a>
+                    </div>
+                </div>
 
-    {% else %}
-    <p>No role assigned. Please contact support.</p>
-    {% endif %}
-</div>
+                <!-- Quick Stats -->
+                <div class="bg-white p-4 rounded shadow-sm">
+                    <h3 class="h5 border-bottom pb-3 mb-4">Your Stats</h3>
+                    <div class="row g-4 text-center">
+                        <div class="col-md-4">
+                            <h4 class="text-primary">12</h4>
+                            <p class="small text-muted mb-0">Active Students</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h4 class="text-primary">24</h4>
+                            <p class="small text-muted mb-0">Total Lessons</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h4 class="text-primary">⭐ 4.9</h4>
+                            <p class="small text-muted mb-0">Average Rating</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin View -->
+                {% elif user.userprofile.role == "admin" %}
+                <div class="card border-warning shadow-sm mb-4">
+                    <div class="card-body text-center p-5">
+                        <i class="fas fa-cogs fa-3x text-warning mb-4"></i>
+                        <h2 class="h4 mb-3">Admin Panel</h2>
+                        <p class="text-muted mb-4">Manage users, content, and platform settings.</p>
+                        <a href="{% url 'admin_user_list' %}" class="btn btn-warning btn-lg px-5 rounded-pill">Go to
+                            Admin</a>
+                    </div>
+                </div>
+
+                {% else %}
+                <div class="alert alert-warning text-center">
+                    <p>No role assigned. Please contact support or complete your profile.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

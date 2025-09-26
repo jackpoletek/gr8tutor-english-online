@@ -3,16 +3,153 @@
 {% block title %}About Us - Gr8Tutor{% endblock %}
 
 {% block content %}
-<h1>About Gr8Tutor</h1>
-<p>Gr8Tutor was founded in 2025 with a mission to make quality English education accessible to everyone.</p>
-
-<section>
-    <h2>Our Mission</h2>
-    <p>To provide personalized, high-quality English tutoring that helps students achieve their language goals.</p>
+<!-- Hero Section -->
+<section class="hero text-white text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold">About Gr8Tutor</h1>
+        <p class="lead">Empowering students through personalized, high-quality English education.</p>
+    </div>
 </section>
 
-<section>
-    <h2>Our Team</h2>
-    <p>Our tutors are certified English teachers with years of experience teaching students of all levels.</p>
+<!-- Mission Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 mb-4 mb-lg-0">
+                <h2 class="fw-bold">Our Mission</h2>
+                <p>Gr8Tutor was founded in 2025 with a mission to make quality English education accessible to everyone,
+                    regardless of location or background. We believe that every student deserves the opportunity to
+                    learn from experienced, passionate tutors in a supportive online environment.</p>
+                <p>Our platform connects learners with certified English teachers who are dedicated to helping students
+                    improve their speaking, listening, reading, and writing skills — all tailored to individual goals
+                    and learning styles.</p>
+            </div>
+            <div class="col-lg-5">
+                <img src="{% static 'img/about.jpg' %}" alt="Our Mission" class="img-fluid rounded shadow-sm">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team / Tutors Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Meet Our Expert Tutors</h2>
+            <p class="text-muted">All our tutors are certified professionals with years of experience teaching ESL
+                students worldwide.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="tutor-card h-100">
+                    <img src="{% static 'img/team-1.jpg' %}" alt="Tutor Jane Doe">
+                    <div class="tutor-info">
+                        <h5>Jane Smith</h5>
+                        <small>TEFL Certified | 8 Years Experience</small>
+                        <div class="tutor-meta mt-2">Specializes in IELTS & Business English</div>
+                        <div class="tutor-social mt-3">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="tutor-card h-100">
+                    <img src="{% static 'img/team-2.jpg' %}" alt="Tutor John Doe">
+                    <div class="tutor-info">
+                        <h5>Michael Brown</h5>
+                        <small>CELTA Certified | 6 Years Experience</small>
+                        <div class="tutor-meta mt-2">Focus: Conversation & Pronunciation</div>
+                        <div class="tutor-social mt-3">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="tutor-card h-100">
+                    <img src="{% static 'img/team-3.jpg' %}" alt="Tutor Alex Johnson">
+                    <div class="tutor-info">
+                        <h5>Sarah Wilson</h5>
+                        <small>MA TESOL | 10 Years Experience</small>
+                        <div class="tutor-meta mt-2">Academic Writing & TOEFL Prep</div>
+                        <div class="tutor-social mt-3">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="tutor-card h-100">
+                    <img src="{% static 'img/team-4.jpg' %}" alt="Tutor Sam Taylor">
+                    <div class="tutor-info">
+                        <h5>David Lee</h5>
+                        <small>TESOL Certified | 5 Years Experience</small>
+                        <div class="tutor-meta mt-2">Beginner & Kids English Programs</div>
+                        <div class="tutor-social mt-3">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Why Students Love Gr8Tutor</h2>
+            <p class="opacity-75">We go beyond traditional tutoring to deliver real results.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="bg-white text-dark p-4 rounded h-100 text-center shadow-sm">
+                    <i class="fas fa-user-check fa-2x text-primary mb-3"></i>
+                    <h5>Vetted Tutors</h5>
+                    <p class="small">Every tutor is certified and interviewed to ensure quality and professionalism.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="bg-white text-dark p-4 rounded h-100 text-center shadow-sm">
+                    <i class="fas fa-comments fa-2x text-primary mb-3"></i>
+                    <h5>One-on-One Learning</h5>
+                    <p class="small">Personalized lessons focused on your unique needs and goals.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="bg-white text-dark p-4 rounded h-100 text-center shadow-sm">
+                    <i class="fas fa-video fa-2x text-primary mb-3"></i>
+                    <h5>Interactive Platform</h5>
+                    <p class="small">Use video, chat, and shared documents for engaging sessions.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="bg-white text-dark p-4 rounded h-100 text-center shadow-sm">
+                    <i class="fas fa-headset fa-2x text-primary mb-3"></i>
+                    <h5>Dedicated Support</h5>
+                    <p class="small">Our team is here to help you find the right tutor and resolve any issues.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-5 text-center bg-light">
+    <div class="container">
+        <h2 class="mb-3">Ready to Improve Your English?</h2>
+        <p class="text-muted mb-4">Join hundreds of students who have boosted their confidence and fluency.</p>
+        <a href="{% url 'register' %}" class="btn btn-primary btn-lg rounded-pill px-5">Start Learning Today</a>
+    </div>
 </section>
 {% endblock %}

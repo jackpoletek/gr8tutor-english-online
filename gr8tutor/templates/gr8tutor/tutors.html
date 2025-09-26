@@ -3,23 +3,73 @@
 {% block title %}Our Tutors - Gr8Tutor{% endblock %}
 
 {% block content %}
-<h1>Meet Our Tutors</h1>
-<p>Our team of experienced English tutors is ready to help you achieve your language goals.</p>
-
-<section>
-    <h2>Tutor Profiles</h2>
-    <p>Information about our tutors will be displayed here.</p>
+<!-- Hero Section -->
+<section class="hero text-white text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Meet Our Expert Tutors</h1>
+        <p class="lead">Choose from certified English teachers with real-world experience.</p>
+    </div>
 </section>
 
-<h2>Available Tutors</h2>
-<ul>
-    {% for tutor in tutors %}
-    <li>
-        {{ tutor.user_profile.user.username }} - {{ tutor.subject }}
-        <a href="{% url 'request_tutor' tutor.id %}">Request Tutor</a>
-    </li>
-    {% empty %}
-    <li>No tutors available.</li>
-    {% endfor %}
-</ul>
+<!-- Tutor Filters (Optional Placeholder) -->
+<!--
+<section class="py-3 bg-light">
+    <div class="container text-center">
+        <span>Filter by:</span>
+        <div class="btn-group mx-3" role="group">
+            <button class="btn btn-sm btn-outline-primary active">All</button>
+            <button class="btn btn-sm btn-outline-primary">Business English</button>
+            <button class="btn btn-sm btn-outline-primary">IELTS/TOEFL</button>
+            <button class="btn btn-sm btn-outline-primary">Conversation</button>
+        </div>
+    </div>
+</section>
+-->
+
+<!-- Tutors Grid -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Available Tutors</h2>
+            <p class="text-muted">Each tutor is verified, experienced, and ready to help you reach your goals.</p>
+        </div>
+
+        {% if tutors %}
+        <div class="row g-4">
+            {% for tutor in tutors %}
+            <div class="col-md-6 col-lg-4">
+                <div class="tutor-card h-100 shadow-sm border rounded overflow-hidden">
+                    <img src="{% static 'img/team-' %}{{ forloop.counter|add:0 }}.jpg"
+                        alt="Tutor {{ tutor.user_profile.user.username }}" class="img-fluid"
+                        style="height: 200px; object-fit: cover;">
+                    <div class="p-4">
+                        <h5 class="mb-1">{{ tutor.user_profile.user.username }}</h5>
+                        <small class="text-primary">Certified Tutor | {{ tutor.experience }} Years</small>
+                        <p class="mt-2 mb-3 small">{{ tutor.bio|truncatewords:20 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-secondary">{{ tutor.subject }}</span>
+                            <a href="{% url 'request_tutor' tutor.id %}" class="btn btn-primary btn-sm px-3">Request
+                                Session</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <p class="text-muted">No tutors are currently available.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- CTA: Become a Tutor -->
+<section class="py-5 bg-primary text-white text-center">
+    <div class="container">
+        <h2 class="h4 mb-3">Are You an English Teacher?</h2>
+        <p class="mb-4 opacity-75">Join our platform and start teaching students from around the world.</p>
+        <a href="{% url 'register' %}?role=tutor" class="btn btn-light btn-lg rounded-pill px-5">Become a Tutor</a>
+    </div>
+</section>
 {% endblock %}

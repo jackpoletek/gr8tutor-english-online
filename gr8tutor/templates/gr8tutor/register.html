@@ -3,36 +3,53 @@
 {% block title %}Register - Gr8Tutor{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-<h1>Create an Account</h1>
-
-{% if error %}
-<div class="alert alert-danger">
-    <p>{{ error }}</p>
-</div>
-{% endif %}
-
-<form method="POST">
-    {% csrf_token %}
-
-    <div class="mb-3">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" class="form-control" required>
+<!-- Hero Section -->
+<section class="hero text-white text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Join Gr8Tutor Today</h1>
+        <p class="lead">Create your account and start your English learning journey.</p>
     </div>
-    
-    <div class="mb-3">
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" class="form-control" required>
-    </div>
-    
-    <div class="mb-3">
-        <label for="password_again">Confirm Password:</label>
-        <input type="password" id="password_again" name="password_again" class="form-control" required>
-    </div>
+</section>
 
-    <button class="btn btn-primary" type="submit">Register</button>
-</form>
+<!-- Register Form -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="border rounded p-5 shadow-sm">
+                    <h2 class="fw-bold mb-4 text-center">Create an Account</h2>
 
-<p>Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
-</div>
+                    {% if error %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                    {% endif %}
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" id="username" name="username" class="form-control form-control-lg"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" id="password" name="password" class="form-control form-control-lg"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password_again" class="form-label">Confirm Password</label>
+                            <input type="password" id="password_again" name="password_again"
+                                class="form-control form-control-lg" required>
+                        </div>
+                        <button class="btn btn-primary btn-lg w-100 py-3" type="submit">Register</button>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <p>Already have an account? <a href="{% url 'login' %}" class="text-primary fw-medium">Log in
+                                here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
