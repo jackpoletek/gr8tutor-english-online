@@ -9,7 +9,7 @@ from .models import Message, Tutor, Student, StudentTutorRelationship, User, Use
 
 # Create your views here.
 def index(request):
-    return render(request, 'gr8tutor/index.html')
+    return render(request, '/index.html')
 
 def about(request):
     return render(request, 'gr8tutor/about.html')
@@ -42,6 +42,11 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
+            # If role not set, redirect
+            user_profile, created = UserProfile.objects.get_or_create(user=user)
+            if not user_profile.role:
+                return redirect("choose_role")
+
             return redirect("dashboard")
         else:
             return render(request, "gr8tutor/login.html",
@@ -136,23 +141,6 @@ def confirm_student(request, student_id):
 
     return redirect("tutor_students")
 
-# Delete a user profile
-@login_required
-def delete_profile(request, user_id):
-    user_to_delete = get_object_or_404(User, id=user_id)
-
-    if request.user != user_to_delete and not request.user.is_staff:
-        return HttpResponseForbidden("You cannot delete this profile.")
-    
-    user_to_delete.delete()
-
-    # User deletes themselves
-    if request.user == user_to_delete:
-        logout(request)
-        return redirect("login")
-
-    return redirect("index")
-
 # Student sending request to Tutor
 @login_required
 def request_tutor(request, tutor_id):
@@ -181,7 +169,7 @@ def request_tutor(request, tutor_id):
 def delete_profile(request, user_id):
     user_to_delete = get_object_or_404(User, id=user_id)
 
-# Only the user or admin can delete the account
+    # Only the user or admin can delete the account
     if request.user != user_to_delete and not request.user.is_staff:
         raise PermissionDenied("You cannot delete this profile.")
     
@@ -189,7 +177,7 @@ def delete_profile(request, user_id):
     
     if request.user == user_to_delete:  # User deleting themselves
         logout(request)
-        return redirect("account_login") # allauth login page
+        return redirect("login")
     else:
         return redirect("index")
 
@@ -257,3 +245,24 @@ def chat_view(request, other_party_id):
         {"messages": messages, "other_user": other_user}
         )
 
+@login_required
+def choose_role(request):
+    user_profile, created = UserProfile.objects.get_or_create(
+        user=request.user
+        )
+
+    # Skip if user has a role
+    if user_profile.role in ["tutor", "student"]:
+        return redirect("dashboard")
+
+    if request.method == "POST":
+        role = request.POST.get("role")
+        if role in ["tutor", "student"]:
+            user_profile.role = role
+            user_profile.save()
+            return redirect("dashboard")
+        else:
+            messages.error(request,
+                           "Invalid role. Please choose tutor or student.")
+
+    return render(request, "gr8tutor/choose_role.html")

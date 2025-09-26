@@ -1,0 +1,23 @@
+{% extends "gr8tutor/base.html" %}
+
+{% block title %}Choose Role{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Choose Your Role</h1>
+    <p>Please select whether you want to register as a Tutor or a Student.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <input type="radio" id="tutor" name="role" value="tutor" required>
+            <label for="tutor">Tutor</label>
+        </div>
+        <div>
+            <input type="radio" id="student" name="role" value="student" required>
+            <label for="student">Student</label>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Continue</button>
+    </form>
+</div>
+{% endblock %}

@@ -33,7 +33,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
             integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
         
-        <!-- Custom CSS -->
+        <!-- CSS -->
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
@@ -55,7 +55,7 @@
                     <a href="{% url 'logout' %}">Logout</a>
                 {% else %}
                     <a href="{% url 'login' %}">Login</a>
-                    <a href="{% url 'regoister' %}">Register</a>
+                    <a href="{% url 'register' %}">Register</a>
                 {% endif %}
             </div>
         </nav>
@@ -63,12 +63,16 @@
 
     <main class="content">
         {% block content %}
-        <!-- Page content will go here -->
+        <!-- Page content -->
         {% endblock %}
     </main>
 
     <footer>
         <p>&copy; 2025 Gr8Tutor - English Online Tutoring. All rights reserved.</p>
     </footer>
+    <!-- Bootstrap JS -->
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+     <!-- JS -->
+      <script src="{% static 'js/main.js' %}"></script>
     </body>
 </html>

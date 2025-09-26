@@ -33,6 +33,9 @@ urlpatterns = [
          views.request_tutor,
          name='request_tutor'
          ),
+     path('choose-role/',
+          views.choose_role,
+          name='choose_role'),
 
     # Admin
     path('delete-profile/<int:user_id>/',
