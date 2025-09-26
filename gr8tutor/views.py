@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
-from django.shortcuts import render, redirect, authenticate, get_object_or_404
+from django.contrib.auth import authenticate
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.core.exceptions import PermissionDenied
@@ -9,7 +9,7 @@ from .models import Message, Tutor, Student, StudentTutorRelationship, User, Use
 
 # Create your views here.
 def index(request):
-    return render(request, '/index.html')
+    return render(request, 'gr8tutor/index.html')
 
 def about(request):
     return render(request, 'gr8tutor/about.html')
@@ -23,6 +23,10 @@ def login(request):
 def register(request):
     return render(request, 'gr8tutor/register.html')
 
+# Dashboard view
+@login_required
+def dashboard(request):
+    return render(request, 'gr8tutor/dashboard.html')
 
 # Login view
 def login_view(request):

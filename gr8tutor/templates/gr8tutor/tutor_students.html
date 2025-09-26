@@ -6,7 +6,7 @@
     <li>
         {{ r.student.user_profile.user.username }}
         <a href="{% url 'confirm_student' r.student.id %}"> Confirm</a>
-        <a href="{% url 'delete_student' r.student.id %}"> Reject</a>
+        <a href="{% url 'delete_profile' r.student.id %}"> Reject</a>
     </li>
     {% empty %}
     <li>No pending requests.</li>
@@ -18,7 +18,7 @@
     {% for r in active_students %}
     <li>
         {{ r.student.user_profile.user.username }}
-        <a href="{% url 'delete_student' r.student.id %}"> Delete</a>
+        <a href="{% url 'delete_profile' r.student.id %}"> Delete</a>
     </li>
     {% empty %}
     <li>No active students.</li>

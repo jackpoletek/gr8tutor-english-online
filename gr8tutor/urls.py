@@ -1,12 +1,9 @@
-from django.urls import path
+from django.urls import path, include
+from django.contrib import admin
 from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('index/', views.index, name='index'),
-    path('dashboard/', views.dashboard, name='dashboard'),
-
-    # Static pages
     path('about/', views.about, name='about'),
     path('tutors/', views.tutors, name='tutors'),
     path('contact/', views.contact, name='contact'),
@@ -15,6 +12,8 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('register/', views.register, name='register'),
     path('logout/', views.logout_view, name='logout'),
+    
+    path('dashboard/', views.dashboard, name='dashboard'),
 
     # Tutor/Student
     path('tutor/students/',
@@ -25,10 +24,7 @@ urlpatterns = [
          views.confirm_student,
          name='confirm_student'
          ),
-    path('delete-student/<int:student_id>/',
-         views.delete_student,
-         name='delete_student'
-         ),
+
     path('request-tutor/<int:tutor_id>/',
          views.request_tutor,
          name='request_tutor'
