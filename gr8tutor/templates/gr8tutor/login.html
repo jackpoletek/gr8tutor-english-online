@@ -4,19 +4,28 @@
 {% block title %}Login - Gr8Tutor{% endblock %}
 
 {% block content %}
-<h1>Login to Your Account</h1>
+<div class="container mt-4">
 
-<form class="login" method="POST" action="{% url 'account_login' %}">
-    {% csrf_token %}
-
-    {{ form.as_p }}
-
-    {% if redirect_field_value %}
-
+    <h1>Login to Your Account</h1>
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
     {% endif %}
 
+<form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="id_username" class="form-label">Username or Email</label>
+        <input id="id_username" name="username" class="form-control" type="text" required>
+    </div>
+    <div class="mb-3">
+        <label for="id_password" class="form-label">Password</label>
+        <input id="id_password" name="password" class="form-control" type="password" required>
+    </div>
     <button class="btn btn-primary" type="submit">{% trans "Login" %}</button>
 </form>
-
 <p>Don't have an account? <a href="{% url 'register' %}">Register here</a>.</p>
+
+</div>
 {% endblock %}

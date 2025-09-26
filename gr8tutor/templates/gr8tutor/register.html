@@ -3,27 +3,46 @@
 {% block title %}Register - Gr8Tutor{% endblock %}
 
 {% block content %}
+<div class="container mt-4">
 <h1>Create an Account</h1>
 
-<form>
-    <div>
-        <label for="fullname">Full Name:</label>
-        <input type="text" id="fullname" name="fullname">
+{% if error %}
+<div class="alert alert-danger">
+    <p>{{ error }}</p>
+</div>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" class="form-control" required>
     </div>
-    <div>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email">
+    
+    <div class="mb-3">
+        <label>Role:</label><br>
+        <input type="radio" id="tutor" name="role" value="tutor" required>
+        <label for="tutor">Tutor</label><br>
+        <input type="radio" id="student" name="role" value="student" required>
+        <label for="student">Student</label><br>
+        <input type="radio" id="admin" name="role" value="admin">
+        <label for="admin">Admin</label>
     </div>
-    <div>
+    
+    <div class="mb-3">
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password">
+        <input type="password" id="password" name="password" class="form-control" required>
     </div>
-    <div>
-        <label for="confirm_password">Confirm Password:</label>
-        <input type="password" id="confirm_password" name="confirm_password">
+    
+    <div class="mb-3">
+        <label for="password_again">Confirm Password:</label>
+        <input type="password" id="password_again" name="password_again" class="form-control" required>
     </div>
-    <button type="submit">Register</button>
+
+    <button class="btn btn-primary" type="submit">Register</button>
 </form>
 
 <p>Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
+</div>
 {% endblock %}

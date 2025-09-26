@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
-from django.shortcuts import redirect
-from django.http import HttpResponse, HttpResponseForbidden
+from django.shortcuts import render, redirect, authenticate, get_object_or_404
+from django.contrib import messages
+from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from .models import Message, Tutor, Student, StudentTutorRelationship
+from .models import Message, Tutor, Student, StudentTutorRelationship, User, UserProfile
 
 # Create your views here.
 def index(request):
@@ -17,8 +17,72 @@ def about(request):
 def contact(request):
     return render(request, 'gr8tutor/contact.html')
 
-# Authentication views are handled by allauth
+def login(request):
+    return render(request, 'gr8tutor/login.html')
 
+def register(request):
+    return render(request, 'gr8tutor/register.html')
+
+
+# Login view
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect("index")
+    
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        # Check required fields
+        if not username or not password:
+            return render(request, "gr8tutor/login.html",
+                          {"error": "Please enter your username and password."})
+        
+        # Authenticate user
+        user = authenticate(request, username=username, password=password)
+        if user:
+            login(request, user)
+            return redirect("dashboard")
+        else:
+            return render(request, "gr8tutor/login.html",
+                          {"error": "Invalid username or password."})
+
+    return render(request, "gr8tutor/login.html")
+
+# Logout view
+def logout_view(request):
+    if request.is_authenticated:
+        logout(request)
+    return redirect("index")
+
+# Registration view
+def register(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        role = request.POST.get("role")
+        password = request.POST.get("password")
+        password_again = request.POST.get("password_again")
+
+        # Check passwords
+        if password != password_again:
+            return render(request, "gr8tutor/register.html",
+                          {"error": "Passwords do not match."})
+        
+        # Check if username already exists
+        if User.objects.filter(username=username).exists():
+            return render(request, "gr8tutor/register.html",
+                          {"error": "Username already taken."})
+        
+        # Create user
+        user = User.objects.create_user(username=username, password=password)
+
+        # Create user profile with chosen role
+        UserProfile.objects.create(user=user, role=role)
+
+        # Redirect to login
+        return redirect("login")
+
+    return render(request, "gr8tutor/register.html")
 
 # Tutor managing a student list
 # List of students
@@ -51,49 +115,66 @@ def tutors(request):
 # Confirm a student request
 @login_required
 def confirm_student(request, student_id):
+    # Only tutors can have access
+    if request.user.userprofile.role != "tutor":
+        return HttpResponseForbidden("Only tutors can confirm students.")
+    
     try:
-        tutor = request.user.userprofile.tutor
+        tutor = request.userprofile.tutor
     except Tutor.DoesNotExist:
         return HttpResponseForbidden("You must be registered as a tutor.")
     
-    relationship = get_object_or_404(
-        StudentTutorRelationship, tutor=tutor, student_id=student_id
+    # Defensive check: making sure the id from the URL is valid
+    student = get_object_or_404(Student, id=student_id)
+
+    # Relationship must exist
+    relationship, created = StudentTutorRelationship.objects.get_or_create(
+        tutor=tutor, student=student
     )
     relationship.is_active = True
     relationship.save()
+
     return redirect("tutor_students")
 
-# Delete a student
+# Delete a user profile
 @login_required
-def delete_student(request, student_id):
-    try:
-        tutor = request.user.userprofile.tutor
-    except Tutor.DoesNotExist:
-        return HttpResponseForbidden("You must be registered as a tutor.")
+def delete_profile(request, user_id):
+    user_to_delete = get_object_or_404(User, id=user_id)
+
+    if request.user != user_to_delete and not request.user.is_staff:
+        return HttpResponseForbidden("You cannot delete this profile.")
     
-    relationship = get_object_or_404(
-        StudentTutorRelationship, tutor=tutor, student__id=student_id
-        )
-    relationship.delete()
-    return redirect("tutor_students")
+    user_to_delete.delete()
+
+    # User deletes themselves
+    if request.user == user_to_delete:
+        logout(request)
+        return redirect("login")
+
+    return redirect("index")
 
 # Student sending request to Tutor
 @login_required
 def request_tutor(request, tutor_id):
-    try:
-        student = request.user.userprofile.student
-    except Student.DoesNotExist:
-        return HttpResponseForbidden("You must be registered as a student.")
+    if request.user.userprofile.role != "student":
+        return HttpResponseForbidden("Only students can request tutors.")
     
+    # Tutor must exist
     tutor = get_object_or_404(Tutor, id=tutor_id)
-    
+
+    student = request.user.userprofile.student
+
+    # Don't allow duplilcate requests
     relationship, created = StudentTutorRelationship.objects.get_or_create(
-        student=student, tutor=tutor, defaults={'is_active': False}
+        student=student, tutor=tutor
     )
 
-    message = "Request sent to tutor."
-
-    return HttpResponse(message)
+    if not created:
+        messages.info(request, "You have already requested this tutor.")
+    else:
+        messages.success(request, "Tutor request sent successfully.")
+    
+    return redirect("dashboard")
 
 # Permission to delete account
 @login_required
@@ -131,7 +212,7 @@ def chat_view(request, other_party_id):
 
     # Don't allow chatting with yourself
     if current_user == other_user:
-        raise PermissionDenied("You cannot chat with yourself.")
+        return HttpResponseForbidden("You cannot chat with yourself.")
 
     # Ensure that the current user and other user have a relationship
     allowed = (
@@ -146,10 +227,12 @@ def chat_view(request, other_party_id):
             student__user_profile__user=current_user,
             is_active=True,
         ).exists()
-        or current_user.is_staff # Admin can chat with anyone
+        or current_user.is_staff  # Admin can chat with anyone
     )
     if not allowed:
-        return HttpResponseForbidden("Sorry, you aren't allowed to chat with this user.")
+        return HttpResponseForbidden(
+            "Sorry, you aren't allowed to chat with this user."
+            )
 
     sent_messages = Message.objects.filter(
         sender=current_user, recipient=other_user
@@ -170,9 +253,7 @@ def chat_view(request, other_party_id):
                 )
 
     return render(
-        request, "gr8tutor/chat.html", {"messages": messages, "other_user": other_user}
+        request, "gr8tutor/chat.html",
+        {"messages": messages, "other_user": other_user}
         )
 
-def logout_view(request):
-    logout(request)
-    return render(request, 'gr8tutor/logout.html')

@@ -1,0 +1,24 @@
+{% extends "gr8tutor/base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Welcome, {{ user.username }}!</h1>
+
+    {% if user.userprofile.role == "student" %}
+    <p>You are logged in as a <strong>Student</strong>.</p>
+    <a href="{% url 'tutors' %}" class="btn btn-success">Find Tutors</a>
+
+    {% elif user.userprofile.role == "tutor" %}
+    <p>You are logged in as a <strong>Tutor</strong>.</p>
+    <a href="{% url 'tutor_students' %}" class="btn btn-info">View My Students</a>
+
+    {% elif user.userprofile.role == "admin" %}
+    <p>You are logged in as an <strong>Admin</strong>.</p>
+    <a href="{% url 'admin_user_list' %}" class="btn btn-warning">Manage Users</a>
+
+    {% else %}
+    <p>No role assigned. Please contact support.</p>
+    {% endif %}
+</div>
+{% endblock %}

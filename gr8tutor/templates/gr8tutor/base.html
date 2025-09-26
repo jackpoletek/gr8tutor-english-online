@@ -4,8 +4,10 @@
 {% url 'about' as about_url %}
 {% url 'tutors' as tutors_url %}
 {% url 'contact' as contact_url %}
-{% url 'account_login' as login_url %}
-{% url 'account_signup' as register_url %}
+{% url 'login' as login_url %}
+{% url 'register' as register_url %}
+{% url 'logout' as logout_url %}    
+{% url 'dashboard' as dashboard_url %}
 
 <!DOCTYPE html><html lang="en">
     
@@ -46,13 +48,14 @@
                 <a href="{% url 'about' %}">About</a>
                 <a href="{% url 'tutors' %}">Tutors</a>
                 <a href="{% url 'contact' %}">Contact</a>
+                <a href="{% url 'login' %}">Login</a>
 
                 {% if user.is_authenticated %}
                     <a href="{% url 'dashboard' %}">Dashboard</a>
-                    <a href="{% url 'account_logout' %}">Logout</a>
+                    <a href="{% url 'logout' %}">Logout</a>
                 {% else %}
-                    <a href="{% url 'account_login' %}">Login</a>
-                    <a href="{% url 'account_signup' %}">Register</a>
+                    <a href="{% url 'login' %}">Login</a>
+                    <a href="{% url 'regoister' %}">Register</a>
                 {% endif %}
             </div>
         </nav>
