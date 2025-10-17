@@ -19,8 +19,14 @@
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span>{{ r.student.user_profile.user.username }}</span>
                 <div>
-                    <a href="{% url 'confirm_student' r.student.id %}" class="btn btn-sm btn-success me-2">Confirm</a>
-                    <a href="{% url 'delete_student' r.student.id %}" class="btn btn-sm btn-outline-danger">Reject</a>
+                    <form action="{% url 'confirm_student' r.student.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-success me-2">Confirm</button>
+                    </form>
+                    <form action="{% url 'delete_student' r.student.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Reject</button>
+                    </form>
                 </div>
             </li>
             {% empty %}
@@ -40,8 +46,10 @@
                 <div>
                     <a href="{% url 'chat' r.student.user_profile.user.id %}"
                         class="btn btn-sm btn-primary me-2">Message</a>
-                    <a href="{% url 'delete_student' r.student.id %}"
-                        class="btn btn-sm btn-outline-secondary">Remove</a>
+                    <form action="{% url 'delete_student' r.student.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Remove</button>
+                    </form>
                 </div>
             </li>
             {% empty %}

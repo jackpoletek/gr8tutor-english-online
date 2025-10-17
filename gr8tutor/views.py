@@ -293,3 +293,28 @@ def choose_role(request):
                            "Invalid role. Please choose tutor or student.")
 
     return render(request, "gr8tutor/choose_role.html")
+
+# Tutor deleting a student
+@login_required
+def delete_student(request, student_id):
+    # Only tutors can have access
+    if request.user.userprofile.role != "tutor":
+        return HttpResponseForbidden("Only tutors can remove students.")
+    
+    try:
+        tutor = request.user.userprofile.tutor
+    except (AttributeError, Tutor.DoesNotExist):
+        return HttpResponseForbidden("You must be registered as a tutor.")
+
+    # Find the relationship
+    relationship = StudentTutorRelationship.objects.filter(
+        tutor=tutor, student__id=student_id
+    ).first()
+
+    if not relationship:
+        raise Http404("This student is not associated with you.")
+    
+    # Delete the relationship
+    relationship.delete()
+    messages.success(request, "Student removed successfully.")
+    return redirect("tutor_students")
