@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib import messages
-from django.http import HttpResponse, HttpResponseForbidden, Http404
+from django.http import HttpResponseForbidden, Http404
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from .models import Message, Tutor, Student, StudentTutorRelationship, User, UserProfile
@@ -17,12 +17,6 @@ def about(request):
 def contact(request):
     return render(request, 'gr8tutor/contact.html')
 
-def login(request):
-    return render(request, 'gr8tutor/login.html')
-
-def register(request):
-    return render(request, 'gr8tutor/register.html')
-
 # Dashboard view
 @login_required
 def dashboard(request):
@@ -31,7 +25,7 @@ def dashboard(request):
 # Login view
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect("index")
+        return redirect("dashboard")
     
     if request.method == "POST":
         username = request.POST.get("username")
@@ -47,7 +41,7 @@ def login_view(request):
         if user:
             login(request, user)
             # If role not set, redirect
-            user_profile, created = UserProfile.objects.get_or_create(user=user)
+            user_profile, _ = UserProfile.objects.get_or_create(user=user)
             if not user_profile.role:
                 return redirect("choose_role")
 
@@ -61,16 +55,21 @@ def login_view(request):
 # Logout view
 def logout_view(request):
     if request.is_authenticated:
-        logout(request)
+        auth_logout(request)
     return redirect("index")
 
 # Registration view
 def register(request):
     if request.method == "POST":
         username = request.POST.get("username")
-        role = request.POST.get("role")
         password = request.POST.get("password")
         password_again = request.POST.get("password_again")
+        role = request.POST.get("role") or request.GET.get("role")
+
+        # Check required fields
+        if not username or not password or not password_again:
+            return render(request, "gr8tutor/register.html",
+                          {"error": "All fields are required."})
 
         # Check passwords
         if password != password_again:
@@ -86,11 +85,22 @@ def register(request):
         user = User.objects.create_user(username=username, password=password)
 
         # Create user profile with chosen role
-        UserProfile.objects.create(user=user, role=role)
+        profile, _ = UserProfile.objects.create(user=user)
+        
+        # If role is valid, assign it
+        if role in ("tutor", "student"):
+            profile.role = role
+            profile.save()
+            if role == "tutor":
+                # Create default Tutor profile
+                Tutor.objects.get_or_create(user_profile=profile)
+            elif role == "student":
+                Student.objects.get_or_create(user_profile=profile)
 
-        # Redirect to login
+        messages.success(request, "Account created. Please log in.")
         return redirect("login")
 
+    # Pass role from GET parameters to template
     return render(request, "gr8tutor/register.html")
 
 # Tutor managing a student list
@@ -99,20 +109,21 @@ def register(request):
 def tutor_students(request):
     try:
         tutor = request.user.userprofile.tutor
-    except Tutor.DoesNotExist:
+    except (AttributeError, Tutor.DoesNotExist):
         return HttpResponseForbidden("You must be registered as a tutor.")
     
-    pending = StudentTutorRelationship.objects.filter(
+    pending_students = StudentTutorRelationship.objects.filter(
         tutor=tutor, is_active=False
         )
-    active = StudentTutorRelationship.objects.filter(
+    active_students = StudentTutorRelationship.objects.filter(
         tutor=tutor, is_active=True
         )
     
     return render(
         request, "gr8tutor/tutor_students.html",
-        {"pending": pending, "active": active}
-                  )
+        {"pending_students": pending_students,
+         "active_students": active_students
+         })
 
 @login_required
 def tutors(request):
@@ -130,11 +141,14 @@ def confirm_student(request, student_id):
     
     try:
         tutor = request.userprofile.tutor
-    except Tutor.DoesNotExist:
+    except (AttributeError, Tutor.DoesNotExist):
         return HttpResponseForbidden("You must be registered as a tutor.")
     
     # Defensive check: making sure the id from the URL is valid
     student = get_object_or_404(Student, id=student_id)
+    if student.user_profile.role and student.user_profile.role != "student":
+        # If the profile exists but is not a student
+        raise Http404("The user is not a student.")
 
     # Relationship must exist
     relationship, created = StudentTutorRelationship.objects.get_or_create(
@@ -142,7 +156,7 @@ def confirm_student(request, student_id):
     )
     relationship.is_active = True
     relationship.save()
-
+    messages.success(request, f"{student.user_profile.user.username} confirmed as your student.")
     return redirect("tutor_students")
 
 # Student sending request to Tutor
@@ -154,7 +168,10 @@ def request_tutor(request, tutor_id):
     # Tutor must exist
     tutor = get_object_or_404(Tutor, id=tutor_id)
 
-    student = request.user.userprofile.student
+    try:
+        student = request.user.userprofile.student
+    except (AttributeError, Student.DoesNotExist):
+        return HttpResponseForbidden("You must be registered as a student.")
 
     # Don't allow duplilcate requests
     relationship, created = StudentTutorRelationship.objects.get_or_create(
@@ -166,7 +183,7 @@ def request_tutor(request, tutor_id):
     else:
         messages.success(request, "Tutor request sent successfully.")
     
-    return redirect("dashboard")
+    return redirect("tutors")
 
 # Permission to delete account
 @login_required
@@ -175,21 +192,21 @@ def delete_profile(request, user_id):
 
     # Only the user or admin can delete the account
     if request.user != user_to_delete and not request.user.is_staff:
-        raise PermissionDenied("You cannot delete this profile.")
-    
-    user_to_delete.delete()
+        raise HttpResponseForbidden("You cannot delete this profile.")
     
     if request.user == user_to_delete:  # User deleting themselves
-        logout(request)
+        user_to_delete.delete()
+        auth_logout(request)
         return redirect("login")
-    else:
-        return redirect("index")
+    
+    user_to_delete.delete()
+    messages.success(request, "User deleted.")
+    return redirect("admin_user_list")
 
 @login_required
 def admin_user_list(request):
     if not request.user.is_staff:
         return HttpResponseForbidden("For admins only.")
-    
     # For admins only
     users = User.objects.all()
     return render(
@@ -204,7 +221,7 @@ def chat_view(request, other_party_id):
 
     # Don't allow chatting with yourself
     if current_user == other_user:
-        return HttpResponseForbidden("You cannot chat with yourself.")
+        return HttpResponseForbidden("Chatting isn't allowed.")
 
     # Ensure that the current user and other user have a relationship
     allowed = (
@@ -213,8 +230,7 @@ def chat_view(request, other_party_id):
             student__user_profile__user=other_user,
             is_active=True,
         ).exists()
-        or
-        StudentTutorRelationship.objects.filter(
+        or StudentTutorRelationship.objects.filter(
             tutor__user_profile__user=other_user,
             student__user_profile__user=current_user,
             is_active=True,
@@ -249,21 +265,28 @@ def chat_view(request, other_party_id):
         {"messages": messages, "other_user": other_user}
         )
 
+# Choose role view
 @login_required
 def choose_role(request):
-    user_profile, created = UserProfile.objects.get_or_create(
+    profile, _ = UserProfile.objects.get_or_create(
         user=request.user
         )
 
     # Skip if user has a role
-    if user_profile.role in ["tutor", "student"]:
+    if profile.role in ["tutor", "student"]:
         return redirect("dashboard")
 
     if request.method == "POST":
         role = request.POST.get("role")
         if role in ["tutor", "student"]:
-            user_profile.role = role
-            user_profile.save()
+            profile.role = role
+            profile.save()
+            # Create corresponding profile
+            if role == "tutor":
+                Tutor.objects.get_or_create(user_profile=profile)
+            else:
+                Student.objects.get_or_create(user_profile=profile)
+            messages.success(request, "Role set. Thank you.")
             return redirect("dashboard")
         else:
             messages.error(request,

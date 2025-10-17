@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -10,17 +11,20 @@ class UserProfile(models.Model):
         ('student', 'Student'),
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    # Safe profile creation
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES,
+                            blank=True, null=True, default='')
     
     def unique_role(self, new_role):
         # Admin can be both tutor and student
         if self.role == "admin":
             return
         # Student cannot be tutor and vice versa
-        if self.role != new_role:
-            raise ValidationError(
-                f"You are already registered as {self.role} and cannot register as {new_role}."
-                )
+        if not self.role or self.role == new_role:
+            return
+        raise ValidationError(
+            f"You are already registered as {self.role} and cannot register as {new_role}."
+            )
 
     def __str__(self):
         return f"{self.user.username} ({self.role})"
@@ -28,8 +32,10 @@ class UserProfile(models.Model):
 class Tutor(models.Model):
     user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
-    hourly_rate = models.DecimalField(max_digits=6, decimal_places=2)
-    subject = models.CharField(max_length=255)
+    hourly_rate = models.DecimalField(max_digits=6, decimal_places=2,
+                                      default=Decimal('0.00'))
+    subject = models.CharField(max_length=255, blank=True)
+    experience = models.IntegerField(default=0)
 
     def __str__(self):
         return self.user_profile.user.username

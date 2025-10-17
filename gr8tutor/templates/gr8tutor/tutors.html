@@ -11,21 +11,6 @@
     </div>
 </section>
 
-<!-- Tutor Filters (Optional Placeholder) -->
-<!--
-<section class="py-3 bg-light">
-    <div class="container text-center">
-        <span>Filter by:</span>
-        <div class="btn-group mx-3" role="group">
-            <button class="btn btn-sm btn-outline-primary active">All</button>
-            <button class="btn btn-sm btn-outline-primary">Business English</button>
-            <button class="btn btn-sm btn-outline-primary">IELTS/TOEFL</button>
-            <button class="btn btn-sm btn-outline-primary">Conversation</button>
-        </div>
-    </div>
-</section>
--->
-
 <!-- Tutors Grid -->
 <section class="py-5 bg-white">
     <div class="container">
@@ -42,14 +27,31 @@
                     <img src="{% static 'img/team-' %}{{ forloop.counter|add:0 }}.jpg"
                         alt="Tutor {{ tutor.user_profile.user.username }}" class="img-fluid"
                         style="height: 200px; object-fit: cover;">
+
                     <div class="p-4">
-                        <h5 class="mb-1">{{ tutor.user_profile.user.username }}</h5>
-                        <small class="text-primary">Certified Tutor | {{ tutor.experience }} Years</small>
-                        <p class="mt-2 mb-3 small">{{ tutor.bio|truncatewords:20 }}</p>
+                        <!-- Tutor name -->
+                        <h5 class="mb-1">
+                            {{ tutor.user_profile.user.username }}
+                        </h5>
+
+                        <!-- Tutor experience -->
+                        <small class="text-primary">
+                            Certified Tutor{% if tutor.experience %} | {{ tutor.experience }} Years{% endif %}
+                        </small>
+
+                        <!-- Tutor bio -->
+                        <p class="mt-2 mb-3 small">
+                            {{ tutor.bio|default:"No bio yet."|truncatewords:20 }}
+                        </p>
+
+                        <!-- Subject badge + Request button -->
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge bg-secondary">{{ tutor.subject }}</span>
-                            <a href="{% url 'request_tutor' tutor.id %}" class="btn btn-primary btn-sm px-3">Request
-                                Session</a>
+                            <span class="badge bg-secondary">
+                                {{ tutor.subject|default:"General" }}
+                            </span>
+                            <a href="{% url 'request_tutor' tutor.id %}" class="btn btn-primary btn-sm px-3">
+                                Request Session
+                            </a>
                         </div>
                     </div>
                 </div>

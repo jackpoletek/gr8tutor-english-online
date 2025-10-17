@@ -1,33 +1,25 @@
 {% extends "gr8tutor/base.html" %}
-
-{% block title %}Chat with {{ other_party.username }} - Gr8Tutor{% endblock %}
+{% block title %}Chat with {{ other_user.username }} - Gr8Tutor{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
 <section class="hero text-white text-center">
     <div class="container">
-        <h1 class="h4 fw-bold">Chat with {{ other_party.username }}</h1>
+        <h1 class="h4 fw-bold">Chat with {{ other_user.username }}</h1>
         <p class="small">Send a message to discuss lessons, schedule, or progress.</p>
     </div>
 </section>
 
-<!-- Chat Interface -->
 <section class="py-5">
     <div class="container">
         <div class="chat-container">
-
-            <!-- Sidebar (if multiple chats) -->
             <div class="chat-sidebar">
                 <h6 class="px-3 py-2 border-bottom">Conversations</h6>
                 <div class="chat-contact active">
-                    {{ other_party.username }}
+                    {{ other_user.username }}
                 </div>
-                <!-- Future: add more contacts -->
             </div>
 
-            <!-- Main Chat Area -->
             <div class="chat-main">
-                <!-- Messages -->
                 <div class="chat-messages">
                     {% for msg in messages %}
                     {% if msg.sender == user %}
@@ -46,7 +38,6 @@
                     {% endfor %}
                 </div>
 
-                <!-- Input Form -->
                 <form method="post" class="chat-input">
                     {% csrf_token %}
                     <input type="text" name="message" placeholder="Type your message..." required>

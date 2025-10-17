@@ -1,1 +1,0 @@
-web: gunicorn gr8tutor_english_online.wsgi
