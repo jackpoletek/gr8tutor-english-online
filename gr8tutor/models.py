@@ -1,6 +1,8 @@
 from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 
 # Create your models here.
@@ -86,3 +88,11 @@ class Message(models.Model):
 
     def __str__(self):
         return f"From {self.sender} to {self.recipient} at {self.time}"
+    
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    # Automatically create UserProfile when a new User is created
+    from .models import UserProfile
+    if created:
+        UserProfile.objects.create(user=instance)
+        

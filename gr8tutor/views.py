@@ -39,9 +39,9 @@ def login_view(request):
         # Authenticate user
         user = authenticate(request, username=username, password=password)
         if user:
-            login(request, user)
+            auth_login(request, user)
             # If role not set, redirect
-            user_profile, _ = UserProfile.objects.get_or_create(user=user)
+            user_profile, created = UserProfile.objects.get_or_create(user=user)
             if not user_profile.role:
                 return redirect("choose_role")
 
@@ -85,7 +85,7 @@ def register(request):
         user = User.objects.create_user(username=username, password=password)
 
         # Create user profile with chosen role
-        profile, _ = UserProfile.objects.create(user=user)
+        profile, created = UserProfile.objects.create(user=user)
         
         # If role is valid, assign it
         if role in ("tutor", "student"):
@@ -268,7 +268,7 @@ def chat_view(request, other_party_id):
 # Choose role view
 @login_required
 def choose_role(request):
-    profile, _ = UserProfile.objects.get_or_create(
+    profile, created = UserProfile.objects.get_or_create(
         user=request.user
         )
 
