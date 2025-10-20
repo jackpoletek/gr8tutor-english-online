@@ -2,7 +2,6 @@ from django.contrib import admin
 
 # Register your models here.
 from .models import UserProfile, Tutor, Student, StudentTutorRelationship, Message
-from django_summernote.admin import SummernoteModelAdmin
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
