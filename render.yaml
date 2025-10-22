@@ -7,6 +7,7 @@ services:
   - type: web
     name: gr8tutor-english-online
     runtime: python
+    workingDirectory: .
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn gr8tutor_english_online.wsgi:application"
     envVars:
