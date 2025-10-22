@@ -9,7 +9,7 @@ services:
     runtime: python
     rootDir: .
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn gr8tutor_english_online.wsgi:application"
+    startCommand: "python -m gunicorn gr8tutor_english_online.wsgi:application --bind 0.0.0.0:$PORT"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: "gr8tutor_english_online.settings"
