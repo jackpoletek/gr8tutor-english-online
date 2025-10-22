@@ -1,16 +1,18 @@
-databases:
-  - name: gr8tutor-db
-    databaseName: gr8tutor_db
-    user: gr8tutor_user
+#databases:
+#  - name: gr8tutor-db
+#    databaseName: gr8tutor_db
+#    user: gr8tutor_user
 
 services:
   - type: web
     name: gr8tutor-english-online
     runtime: python
-    workingDirectory: .
+    rootDir: .
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn gr8tutor_english_online.wsgi:application"
     envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: "gr8tutor_english_online.settings"
       - key: DEBUG
         value: "False"
       - key: SECRET_KEY
