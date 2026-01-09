@@ -8,6 +8,29 @@ from django.contrib.auth.decorators import login_required
 from .models import Message, Tutor, Student, StudentTutorRelationship, User, UserProfile
 
 # Create your views here.
+
+def user_is_tutor(user):
+    return hasattr(user, 'userprofile') and user.userprofile.role == 'tutor'
+
+def user_is_student(user):
+    return hasattr(user, 'userprofile') and user.userprofile.role == 'student'
+
+def get_tutor_or_forbidden(user):
+    if not user_is_tutor(user):
+        return None, HttpResponseForbidden("You must be a tutor to access this page.")
+    try:
+        return user.userprofile.tutor, None
+    except (AttributeError, Tutor.DoesNotExist):
+        return None, HttpResponseForbidden("You must be registered as a tutor.")
+    
+def get_student_or_forbidden(user):
+    if not user_is_student(user):
+        return None, HttpResponseForbidden("You must be a student to access this page.")
+    try:
+        return user.userprofile.student, None
+    except (AttributeError, Student.DoesNotExist):
+        return None, HttpResponseForbidden("You must be registered as a student.")
+
 def index(request):
     return render(request, 'gr8tutor/index.html')
 
@@ -107,10 +130,9 @@ def register(request):
 # List of students
 @login_required
 def tutor_students(request):
-    try:
-        tutor = request.user.userprofile.tutor
-    except (AttributeError, Tutor.DoesNotExist):
-        return HttpResponseForbidden("You must be registered as a tutor.")
+    tutor, error_response = get_tutor_or_forbidden(request.user)
+    if error_response:
+        return error_response
     
     pending_students = StudentTutorRelationship.objects.filter(
         tutor=tutor, is_active=False
@@ -136,13 +158,9 @@ def tutors(request):
 @login_required
 def confirm_student(request, student_id):
     # Only tutors can have access
-    if request.user.userprofile.role != "tutor":
-        return HttpResponseForbidden("Only tutors can confirm students.")
-    
-    try:
-        tutor = request.userprofile.tutor
-    except (AttributeError, Tutor.DoesNotExist):
-        return HttpResponseForbidden("You must be registered as a tutor.")
+    tutor, error_response = get_tutor_or_forbidden(request.user)
+    if error_response:
+        return error_response
     
     # Defensive check: making sure the id from the URL is valid
     student = get_object_or_404(Student, id=student_id)
@@ -162,16 +180,12 @@ def confirm_student(request, student_id):
 # Student sending request to Tutor
 @login_required
 def request_tutor(request, tutor_id):
-    if request.user.userprofile.role != "student":
-        return HttpResponseForbidden("Only students can request tutors.")
+    student, error_response = get_student_or_forbidden(request.user)
+    if error_response:
+        return error_response
     
     # Tutor must exist
     tutor = get_object_or_404(Tutor, id=tutor_id)
-
-    try:
-        student = request.user.userprofile.student
-    except (AttributeError, Student.DoesNotExist):
-        return HttpResponseForbidden("You must be registered as a student.")
 
     # Don't allow duplilcate requests
     relationship, created = StudentTutorRelationship.objects.get_or_create(
@@ -298,13 +312,9 @@ def choose_role(request):
 @login_required
 def delete_student(request, student_id):
     # Only tutors can have access
-    if request.user.userprofile.role != "tutor":
-        return HttpResponseForbidden("Only tutors can remove students.")
-    
-    try:
-        tutor = request.user.userprofile.tutor
-    except (AttributeError, Tutor.DoesNotExist):
-        return HttpResponseForbidden("You must be registered as a tutor.")
+    tutor, error_response = get_tutor_or_forbidden(request.user)
+    if error_response:
+        return error_response
 
     # Find the relationship
     relationship = StudentTutorRelationship.objects.filter(
