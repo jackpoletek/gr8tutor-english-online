@@ -56,8 +56,8 @@ def login_view(request):
 
         # Check required fields
         if not username or not password:
-            return render(request, "gr8tutor/login.html",
-                          {"error": "Please enter your username and password."})
+            messages.error(request, "Please enter your username and password.")
+            return redirect("login")
         
         # Authenticate user
         user = authenticate(request, username=username, password=password)
@@ -70,8 +70,8 @@ def login_view(request):
 
             return redirect("dashboard")
         else:
-            return render(request, "gr8tutor/login.html",
-                          {"error": "Invalid username or password."})
+            messages.error(request, "Invalid username or password.")
+            return redirect("login")
 
     return render(request, "gr8tutor/login.html")
 
@@ -91,18 +91,18 @@ def register(request):
 
         # Check required fields
         if not username or not password or not password_again:
-            return render(request, "gr8tutor/register.html",
-                          {"error": "All fields are required."})
+            messages.error(request, "All fields are required.")
+            return redirect("register")
 
         # Check passwords
         if password != password_again:
-            return render(request, "gr8tutor/register.html",
-                          {"error": "Passwords do not match."})
+            messages.error(request, "Passwords do not match.")
+            return redirect("register")
         
         # Check if username already exists
         if User.objects.filter(username=username).exists():
-            return render(request, "gr8tutor/register.html",
-                          {"error": "Username already taken."})
+            messages.error(request, "Username already taken.")
+            return redirect("register")
         
         # Create user
         user = User.objects.create_user(username=username, password=password)
@@ -202,7 +202,9 @@ def request_tutor(request, tutor_id):
 # Permission to delete account
 @login_required
 def delete_profile(request, user_id):
-    user_to_delete = get_object_or_404(User, id=user_id)
+    # Only the user themselves or admin can delete
+    if request.method == "POST":
+        user_to_delete = get_object_or_404(User, id=user_id)
 
     # Only the user or admin can delete the account
     if request.user != user_to_delete and not request.user.is_staff:
@@ -211,6 +213,7 @@ def delete_profile(request, user_id):
     if request.user == user_to_delete:  # User deleting themselves
         user_to_delete.delete()
         auth_logout(request)
+        messages.success(request, "Your account has been deleted.")
         return redirect("login")
     
     user_to_delete.delete()
@@ -289,6 +292,7 @@ def chat_view(request, other_party_id):
         Message.objects.create(
             sender=current_user, recipient=other_user, text=text
             )
+        messages.success(request, "Message sent.")
         return redirect(
             "chat", other_party_id=other_user.id
             )
@@ -324,6 +328,7 @@ def choose_role(request):
         else:
             messages.error(request,
                            "Invalid role. Please choose tutor or student.")
+            return redirect("choose_role")
 
     return render(request, "gr8tutor/choose_role.html")
 
@@ -331,9 +336,10 @@ def choose_role(request):
 @login_required
 def delete_student(request, student_id):
     # Only tutors can have access
-    tutor, error_response = get_tutor_or_forbidden(request.user)
-    if error_response:
-        return error_response
+    if request.method == "POST":
+        tutor, error_response = get_tutor_or_forbidden(request.user)
+        if error_response:
+            return error_response
 
     # Find the relationship
     relationship = StudentTutorRelationship.objects.filter(
@@ -342,7 +348,7 @@ def delete_student(request, student_id):
 
     if not relationship:
         raise Http404("This student is not associated with you.")
-    
+
     # Delete the relationship
     relationship.delete()
     messages.success(request, "Student removed successfully.")
