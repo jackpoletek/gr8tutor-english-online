@@ -267,12 +267,31 @@ def chat_view(request, other_party_id):
     if request.method == "POST":
         text = request.POST.get("message")
         if text:
-            Message.objects.create(
-                sender=current_user, recipient=other_user, text=text
-                )
-            return redirect(
-                "chat", other_party_id=other_user.id
-                )
+            # Verify both users belong to same confirmed request
+            is_tutor_student_relationship = StudentTutorRelationship.objects.filter(
+                tutor__user_profile__user=current_user,
+                student__user_profile__user=other_user,
+                is_active=True,
+            ).exists()
+
+            is_student_tutor_relationship = StudentTutorRelationship.objects.filter(
+                tutor__user_profile__user=other_user,
+                student__user_profile__user=current_user,
+                is_active=True,
+            ).exists()
+
+            # Allow message sending only if there's a relationship between users
+            if not (is_tutor_student_relationship or is_student_tutor_relationship or current_user.is_staff):
+                return HttpResponseForbidden(
+                    "You cannot send messages to this user."
+                    )
+
+        Message.objects.create(
+            sender=current_user, recipient=other_user, text=text
+            )
+        return redirect(
+            "chat", other_party_id=other_user.id
+            )
 
     return render(
         request, "gr8tutor/chat.html",
