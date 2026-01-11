@@ -24,17 +24,20 @@
             <div class="chat-main">
                 <div class="chat-messages">
                     {% for msg in messages %}
-                    {% if msg.sender == user %}
-                    <div class="message sent">
-                        {{ msg.text }}
-                        <small class="d-block text-end opacity-75">{{ msg.time|date:"H:i" }}</small>
+                    <div class="{% if msg.sender == user %}text-end mb-2{% else %}text-start mb-2{% endif %}">
+                        {% if msg.sender != user %}
+                        <small class="text-muted">
+                            {{ msg.sender.username }}
+                        </small>
+                        {% endif %}
+                        <p class="border p-2 d-inline-block {% if msg.sender == user %}bg-primary text-white{% else %}bg-light{% endif %}">
+                            {{ msg.text }}
+                        </p>
+                        <br>
+                        <small class="text-muted">
+                            {{ msg.time|date:"H:i" }}
+                        </small>
                     </div>
-                    {% else %}
-                    <div class="message received">
-                        <strong>{{ msg.sender.username }}:</strong> {{ msg.text }}
-                        <small class="d-block opacity-75">{{ msg.time|date:"H:i" }}</small>
-                    </div>
-                    {% endif %}
                     {% empty %}
                     <p class="text-muted text-center mt-3">No messages yet.</p>
                     {% endfor %}

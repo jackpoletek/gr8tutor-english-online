@@ -61,4 +61,28 @@ document.addEventListener("DOMContentLoaded", function () {
     // Show slider once initialized
     slider.style.display = "block";
   });
+
+  // Prevent sending empty forms
+  const chatForms = document.querySelectorAll("form.chat-input");
+  chatForms.forEach((form) => {
+    form.addEventListener("submit", function (e) {
+      const messageInput = this.querySelector('input[name="message"]');
+      if (messageInput && !messageInput.value.trim()) {
+        e.preventDefault();
+        // Validation
+        messageInput.classList.add("is-invalid");
+        // Show alert
+        alert("Message cannot be empty. Please enter a message.");
+        messageInput.focus();
+        // Remove invalid class
+        messageInput.addEventListener(
+          "input",
+          function () {
+            this.classList.remove("is-invalid");
+          },
+          { once: true }
+        );
+      }
+    });
+  });
 });
