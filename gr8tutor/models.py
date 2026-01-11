@@ -86,6 +86,9 @@ class Message(models.Model):
     text = models.TextField()
     time = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['timestamp']
+
     def __str__(self):
         return f"From {self.sender} to {self.recipient} at {self.time}"
     

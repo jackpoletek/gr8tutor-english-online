@@ -268,26 +268,33 @@ def chat_view(request, other_party_id):
     messages = sent_messages.union(received_messages).order_by("time")
 
     if request.method == "POST":
-        text = request.POST.get("message")
-        if text:
-            # Verify both users belong to same confirmed request
-            is_tutor_student_relationship = StudentTutorRelationship.objects.filter(
-                tutor__user_profile__user=current_user,
-                student__user_profile__user=other_user,
-                is_active=True,
-            ).exists()
+        text = request.POST.get("message", "").strip()
 
-            is_student_tutor_relationship = StudentTutorRelationship.objects.filter(
-                tutor__user_profile__user=other_user,
-                student__user_profile__user=current_user,
-                is_active=True,
-            ).exists()
+        # Validate message is not empty
+        if not text:
+            messages.error(request, "Message cannot be empty.")
+            return redirect(
+                "chat", other_party_id=other_user.id
+                )
 
-            # Allow message sending only if there's a relationship between users
-            if not (is_tutor_student_relationship or is_student_tutor_relationship or current_user.is_staff):
-                return HttpResponseForbidden(
-                    "You cannot send messages to this user."
-                    )
+        # Verify both users belong to same confirmed request
+        is_tutor_student_relationship = StudentTutorRelationship.objects.filter(
+            tutor__user_profile__user=current_user,
+            student__user_profile__user=other_user,
+            is_active=True,
+        ).exists()
+
+        is_student_tutor_relationship = StudentTutorRelationship.objects.filter(
+            tutor__user_profile__user=other_user,
+            student__user_profile__user=current_user,
+            is_active=True,
+        ).exists()
+
+        # Allow message sending only if there's a relationship between users
+        if not (is_tutor_student_relationship or is_student_tutor_relationship or current_user.is_staff):
+            return HttpResponseForbidden(
+                "You cannot send messages to this user."
+                )
 
         Message.objects.create(
             sender=current_user, recipient=other_user, text=text
