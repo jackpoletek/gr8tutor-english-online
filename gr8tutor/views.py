@@ -265,7 +265,7 @@ def chat_view(request, other_party_id):
     received_messages = Message.objects.filter(
         sender=other_user, recipient=current_user
         )
-    messages = sent_messages.union(received_messages).order_by("time")
+    messages = sent_messages.union(received_messages).order_by("id")
 
     if request.method == "POST":
         text = request.POST.get("message", "").strip()
