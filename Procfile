@@ -1,1 +1,1 @@
-web: gunicorn gr8tutor_english_online.wsgi
+web: gunicorn --chdir gr8tutor_english_online gr8tutor_english_online.wsgi:application
