@@ -13,6 +13,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from urllib.parse import urlparse
+import environ
+
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+
+environ.Env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -51,10 +58,12 @@ else:
             }
         }
 
-ALLOWED_HOSTS = ["gr8tutor-english-online.herokuapp.com",
-                 "127.0.0.1",
-                 "localhost",
-                 ]
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS",
+                         default=[
+                             "127.0.0.1",
+                             "localhost",
+                             ".herokuapp.com",
+                             ])
 
 INSTALLED_APPS = [
     'django.contrib.admin',
