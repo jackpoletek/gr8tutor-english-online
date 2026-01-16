@@ -150,7 +150,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Static files for development
 STATICFILES_DIRS = [
-    BASE_DIR / "gr8tutor/static",
+    BASE_DIR / "gr8tutor" / "static",
 ]
 
 # WhiteNoise configuration for serving static files
