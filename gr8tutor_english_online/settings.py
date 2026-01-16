@@ -62,6 +62,7 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS",
                          default=[
                              "127.0.0.1",
                              "localhost",
+                             "gr8tutor-english-online.herokuapp.com",
                              ".herokuapp.com",
                              ])
 
