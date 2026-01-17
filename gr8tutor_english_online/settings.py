@@ -146,9 +146,6 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 # Static files for development
-STATICFILES_DIRS = [
-    BASE_DIR / "staticfiles",
-]
 
 # Static files for production
 STATIC_ROOT = BASE_DIR / "staticfiles"
