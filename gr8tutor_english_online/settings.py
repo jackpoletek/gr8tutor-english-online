@@ -147,7 +147,7 @@ STATIC_URL = "/static/"
 
 # Static files for development
 STATICFILES_DIRS = [
-    BASE_DIR / "gr8tutor" / "static",
+    BASE_DIR / "static",
 ]
 
 # Static files for production
