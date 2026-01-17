@@ -147,7 +147,7 @@ STATIC_URL = "/static/"
 
 # Static files for development
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "staticfiles",
 ]
 
 # Static files for production

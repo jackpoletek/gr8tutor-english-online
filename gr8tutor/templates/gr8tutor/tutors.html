@@ -26,7 +26,7 @@
             {% for tutor in tutors %}
             <div class="col-md-6 col-lg-4">
                 <div class="tutor-card h-100 shadow-sm border rounded overflow-hidden">
-                    <img src="{% static '/img/team-' %}{{ forloop.counter|add:0 }}.jpg"
+                    <img src="{% static 'gr8tutor/img/team-' %}{{ forloop.counter|add:0 }}.jpg"
                         alt="Tutor {{ tutor.user_profile.user.username }}" class="img-fluid"
                         style="height: 200px; object-fit: cover;">
 
