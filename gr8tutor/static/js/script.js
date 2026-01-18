@@ -62,6 +62,12 @@ document.addEventListener("DOMContentLoaded", function () {
     slider.style.display = "block";
   });
 
+  // Auto-scroll chat to bottom
+  const messagesContainer = document.querySelector(".chat-messages");
+  if (messagesContainer) {
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
   // Prevent sending empty forms
   const chatForms = document.querySelectorAll("form.chat-input");
   chatForms.forEach((form) => {
