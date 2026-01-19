@@ -25,8 +25,9 @@
                     <div class="alert alert-danger">{{ error }}</div>
                     {% endif %}
 
-                    <form method="POST">
+                    <form method="POST" id="registerForm">
                         {% csrf_token %}
+
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
                             <input type="text" name="username" class="form-control" id="username" required>
@@ -45,23 +46,33 @@
                         <!-- Role selection -->
                         <div class="mb-3">
                             <label class="form-label d-block">Register as:</label>
+
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="role" id="roleStudent"
                                     value="student" checked>
                                 <label class="form-check-label" for="roleStudent">Student</label>
                             </div>
+
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="role" id="roleTutor" value="tutor">
                                 <label class="form-check-label" for="roleTutor">Tutor</label>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Register</button>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            Register
+                        </button>
                     </form>
 
                     <div class="text-center mt-4">
-                        <p>Already have an account? <a href="{% url 'login' %}" class="text-primary fw-medium">Log in
-                                here</a></p>
+                        <p>
+                            Already have an account?
+                            <a href="{% url 'login' %}" class="text-primary fw-medium">
+                                Log in here
+                            </a>
+                        </p>
                     </div>
+
                 </div>
             </div>
         </div>
