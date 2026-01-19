@@ -207,6 +207,28 @@ a:hover {
     border-radius: 8px;
 }
 
+/* Tutors */
+
+.tutor-card {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    height: 100%;
+}
+
+.tutor-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+}
+
+.tutor-info {
+    padding: 1rem;
+    text-align: center;
+}
+
 /* Chat */
 
 .chat-container {
