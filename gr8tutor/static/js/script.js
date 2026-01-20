@@ -1,12 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
-
+  
   /* Sticky Navbar */
   const navbar = document.querySelector(".navbar");
 
   if (navbar) {
     window.addEventListener("scroll", function () {
-      if (!navbar) return;
-
       if (window.scrollY > 50) {
         navbar.classList.add("scrolled");
       } else {
@@ -29,10 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     backToTop.addEventListener("click", function (e) {
       e.preventDefault();
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
   }
 
@@ -44,12 +39,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const prevBtn = slider.querySelector(".prev");
     const nextBtn = slider.querySelector(".next");
     const dots = slider.querySelectorAll(".slider-dot");
-
     let currentIndex = 0;
 
-    function updateSlider () {
-      slider.querySelector(".slider-images").style.transform = "translateX(-" + (currentIndex * 100) + "%)";
-
+    function updateSlider() {
+      slider.querySelector(".slider-images").style.transform =
+        "translateX(-" + currentIndex * 100 + "%)";
       dots.forEach(function (dot, index) {
         dot.classList.toggle("active", index === currentIndex);
       });
@@ -79,31 +73,34 @@ document.addEventListener("DOMContentLoaded", function () {
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
-  /* Registration Alert & Role Redirect */
-  const registerForm = document.getElementById("registerForm");
+  /* Registration Success SWAL */
+  if (window.registrationSuccess) {
+    Swal.fire({
+      icon: "success",
+      title: "Registration complete",
+      text:
+        window.registrationMessage || "Thank you for registering on Gr8tutor!",
+      confirmButtonText: "Go to login",
+    }).then(() => {
+      window.location.href = "/login/";
+    });
+  }
 
-  if (registerForm) {
-    registerForm.addEventListener("submit", function () {
-      const selectedRoleInput = document.querySelector('input[name="role"]:checked');
-      const selectedRole = selectedRoleInput ? selectedRoleInput.value : "student"; 
+  /* Login Error SWAL */
+  if (window.loginError) {
+    Swal.fire({
+      icon: "error",
+      title: "Login failed",
+      text: window.loginErrorMessage || "Invalid login details.",
+    });
+  }
 
-      let message = "Thank you for registering on Gr8tutor!\n\n";
-
-      if (selectedRole === "tutor") {
-        message +=
-          "You registered as a TUTOR.\n\n" +
-          "You can now create your tutor profile, offer lessons, and connect with students.";
-      } else {
-        message +=
-          "You registered as a STUDENT.\n\n" +
-          "You can now browse tutors, book lessons, and start learning!";
-      }
-
-      alert(message);
-
-      setTimeout(function () {
-        window.location.href = "/dashboard/";
-      }, 500);
+  /* Registration Error SWAL */
+  if (window.registrationError) {
+    Swal.fire({
+      icon: "error",
+      title: "Registration error",
+      text: window.registrationErrorMessage || "Please check the form.",
     });
   }
 
@@ -117,7 +114,12 @@ document.addEventListener("DOMContentLoaded", function () {
       if (messageInput && !messageInput.value.trim()) {
         e.preventDefault();
         messageInput.classList.add("is-invalid");
-        alert("You cannot send an empty message.");
+
+        Swal.fire({
+          icon: "warning",
+          text: "You cannot send an empty message.",
+        });
+
         messageInput.focus();
 
         messageInput.addEventListener(
@@ -130,5 +132,4 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
-
 });

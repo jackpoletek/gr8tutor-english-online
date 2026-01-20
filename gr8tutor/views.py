@@ -1,14 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import logout
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib import messages
 from django.http import HttpResponseForbidden, Http404
-from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
-from .models import Message, Tutor, Student, StudentTutorRelationship, User, UserProfile
+from .models import (
+    Message,
+    Tutor,
+    Student,
+    StudentTutorRelationship,
+    User,
+    UserProfile)
 
-# Create your views here.
-
+# Helper functions
 def user_is_tutor(user):
     return hasattr(user, 'userprofile') and user.userprofile.role == 'tutor'
 
@@ -22,7 +25,7 @@ def get_tutor_or_forbidden(user):
         return user.userprofile.tutor, None
     except (AttributeError, Tutor.DoesNotExist):
         return None, HttpResponseForbidden("You must be registered as a tutor.")
-    
+
 def get_student_or_forbidden(user):
     if not user_is_student(user):
         return None, HttpResponseForbidden("You must be a student to access this page.")
@@ -31,6 +34,7 @@ def get_student_or_forbidden(user):
     except (AttributeError, Student.DoesNotExist):
         return None, HttpResponseForbidden("You must be registered as a student.")
 
+# Basic views
 def index(request):
     return render(request, 'gr8tutor/index.html')
 
@@ -56,22 +60,35 @@ def login_view(request):
 
         # Check required fields
         if not username or not password:
-            messages.error(request, "Please enter your username and password.")
-            return redirect("login")
+            return render(
+                request,
+                "gr8tutor/login.html",
+                {"login_error": True,
+                 "error_message": "Both fields are required."}
+            )
         
         # Authenticate user
         user = authenticate(request, username=username, password=password)
-        if user:
-            auth_login(request, user)
-            # If role not set, redirect
-            user_profile, created = UserProfile.objects.get_or_create(user=user)
-            if not user_profile.role:
-                return redirect("choose_role")
 
-            return redirect("dashboard")
-        else:
-            messages.error(request, "Invalid username or password.")
-            return redirect("login")
+        # When user is not found
+        if user is None:
+            return render(
+                request,
+                "gr8tutor/login.html",
+                {"login_error": True,
+                 "error_message": "This account does not exist."}
+            )
+
+        auth_login(request, user)
+
+        # If role not set, redirect
+        user_profile, _ = UserProfile.objects.get_or_create(user=user)
+        
+        # Redirect if no role chosen
+        if not user_profile.role:
+            return redirect("choose_role")
+
+        return redirect("dashboard")
 
     return render(request, "gr8tutor/login.html")
 
@@ -91,24 +108,35 @@ def register(request):
 
         # Check required fields
         if not username or not password or not password_again:
-            messages.error(request, "All fields are required.")
-            return redirect("register")
+            return render(
+                request,
+                "gr8tutor/register.html",
+                {"registration_error": True,
+                 "error_message": "All fields are required."}
+            )
 
         # Check passwords
         if password != password_again:
             messages.error(request, "Passwords do not match.")
-            return redirect("register")
+            return render(request, "gr8tutor/register.html",
+                          {"registration_error": True,
+                           "error_message": "Passwords do not match."}
+                          )
         
         # Check if username already exists
         if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already taken.")
-            return redirect("register")
+            return render(
+                request,
+                "gr8tutor/register.html",
+                {"registration_error": True,
+                 "error_message": "Username already taken."}
+            )
         
         # Create user
         user = User.objects.create_user(username=username, password=password)
 
         # Create user profile with chosen role
-        profile, created = UserProfile.objects.create(user=user)
+        profile = UserProfile.objects.create(user=user)
         
         # If role is valid, assign it
         if role in ("tutor", "student"):
@@ -120,8 +148,11 @@ def register(request):
             elif role == "student":
                 Student.objects.get_or_create(user_profile=profile)
 
-        messages.success(request, "Account created. Please log in.")
-        return redirect("login")
+        return render(
+            request,
+            "gr8tutor/registration_success.html",
+            {"registration_success": True,
+             "username": username, "role": role})
 
     # Pass role from GET parameters to template
     return render(request, "gr8tutor/register.html")
@@ -174,6 +205,7 @@ def confirm_student(request, student_id):
     )
     relationship.is_active = True
     relationship.save()
+    
     messages.success(request, f"{student.user_profile.user.username} confirmed as your student.")
     return redirect("tutor_students")
 
