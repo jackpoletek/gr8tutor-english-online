@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  
   /* Sticky Navbar */
   const navbar = document.querySelector(".navbar");
 
@@ -73,35 +72,57 @@ document.addEventListener("DOMContentLoaded", function () {
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
-  /* Registration Success SWAL */
-  if (window.registrationSuccess) {
-    Swal.fire({
-      icon: "success",
-      title: "Registration complete",
-      text:
-        window.registrationMessage || "Thank you for registering on Gr8tutor!",
-      confirmButtonText: "Go to login",
-    }).then(() => {
-      window.location.href = "/login/";
-    });
+  /* Reusable SweetAlert helper */
+  function showSwal(options) {
+    if (typeof Swal !== "undefined") {
+      Swal.fire(options);
+    } else {
+      alert(options.text || "Something went wrong.");
+    }
   }
 
-  /* Login Error SWAL */
-  if (window.loginError) {
-    Swal.fire({
-      icon: "error",
-      title: "Login failed",
-      text: window.loginErrorMessage || "Invalid login details.",
-    });
-  }
+  /* Read Django flags safely */
+  const flagsEl = document.getElementById("js-flags");
 
-  /* Registration Error SWAL */
-  if (window.registrationError) {
-    Swal.fire({
-      icon: "error",
-      title: "Registration error",
-      text: window.registrationErrorMessage || "Please check the form.",
-    });
+  if (flagsEl) {
+    const loginError = flagsEl.dataset.loginError === "true";
+    const loginErrorMessage = flagsEl.dataset.loginErrorMessage;
+
+    const registrationSuccess = flagsEl.dataset.registrationSuccess === "true";
+    const registrationMessage = flagsEl.dataset.registrationMessage;
+
+    const registrationError = flagsEl.dataset.registrationError === "true";
+    const registrationErrorMessage = flagsEl.dataset.registrationErrorMessage;
+
+    /* Registration success */
+    if (registrationSuccess) {
+      showSwal({
+        icon: "success",
+        title: "Registration complete",
+        text: registrationMessage || "Thank you for registering on Gr8tutor!",
+        confirmButtonText: "Go to login",
+      }).then(() => {
+        window.location.href = "/login/";
+      });
+    }
+
+    /* Login error */
+    if (loginError) {
+      showSwal({
+        icon: "error",
+        title: "Login failed",
+        text: loginErrorMessage || "Invalid login details.",
+      });
+    }
+
+    /* Registration error */
+    if (registrationError) {
+      showSwal({
+        icon: "error",
+        title: "Registration error",
+        text: registrationErrorMessage || "Please check the form.",
+      });
+    }
   }
 
   /* Chat Form Validation */
@@ -115,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
         messageInput.classList.add("is-invalid");
 
-        Swal.fire({
+        showSwal({
           icon: "warning",
           text: "You cannot send an empty message.",
         });
@@ -127,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
           function () {
             this.classList.remove("is-invalid");
           },
-          { once: true }
+          { once: true },
         );
       }
     });

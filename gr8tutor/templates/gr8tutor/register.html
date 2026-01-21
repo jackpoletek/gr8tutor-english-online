@@ -78,4 +78,11 @@
         </div>
     </div>
 </section>
+<!-- JavaScript flags -->
+<div id="js-flags" data-login-error="false" data-login-error-message=""
+    data-registration-success="{{ registration_success|default:'false' }}"
+    data-registration-message="{{ registration_message|default:''|escapejs }}"
+    data-registration-error="{{ registration_error|default:'false' }}"
+    data-registration-error-message="{{ error_message|default:''|escapejs }}">
+</div>
 {% endblock %}

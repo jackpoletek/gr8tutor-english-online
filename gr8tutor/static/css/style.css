@@ -305,14 +305,14 @@ a:hover {
 
 /* Responsive Design */
 
-/* Mobile devices */
+/* Mobile device */
 @media (min-width: 576px) {
     .col-sm-6 {
         width: 50%;
     }
 }
 
-/* Tablets */
+/* Tablet */
 @media (min-width: 768px) {
     .col-md-6 {
         width: 50%;
@@ -323,7 +323,7 @@ a:hover {
     }
 }
 
-/* Desktops */
+/* Desktop */
 @media (min-width: 992px) {
     .col-lg-3 {
         width: 25%;
