@@ -48,7 +48,16 @@
         </div>
     </div>
 </section>
-
+{% if register_error %}
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Registration failed',
+        text: '{{ error_message|escapejs }}',
+        confirmButtonText: 'OK'
+    });
+</script>
+{% endif %}
 <div id="js-flags" data-registration-success="{{ registration_success|default:'false' }}"
     data-registration-message="{{ registration_message|default:''|escapejs }}">
 </div>

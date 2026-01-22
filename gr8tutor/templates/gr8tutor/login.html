@@ -53,6 +53,16 @@
         </div>
     </div>
 </section>
+{% if login_error %}
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Login failed',
+        text: '{{ error_message|escapejs }}',
+        confirmButtonText: 'OK'
+    });
+</script>
+{% endif %}
 <!-- JavaScript flags -->
 <div id="js-flags" data-login-error="{{ login_error|default:'false' }}"
     data-login-error-message="{{ error_message|default:''|escapejs }}" data-registration-success="false"
