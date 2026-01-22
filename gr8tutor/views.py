@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.contrib import messages
 from django.db import OperationalError
+import logging
 
 from .models import (
     Message,
@@ -13,6 +14,8 @@ from .models import (
     User,
     UserProfile,
 )
+
+logger = logging.getLogger(__name__)
 
 # Helper functions (role & permission checks)
 
@@ -58,11 +61,16 @@ def contact(request):
 def login_view(request):
     if request.user.is_authenticated:
         return redirect("dashboard")
+    
+    # GET request - show login page
+    if request.method == "GET":
+        return render(request, "gr8tutor/login.html")
 
+    # POST request - process login
     try:
         if request.method == "POST":
-            username = request.POST.get("username")
-            password = request.POST.get("password")
+            username = request.POST.get("username", "").strip()
+            password = request.POST.get("password", "").strip()
 
             # Check for missing fields
             if not username or not password:
@@ -73,6 +81,7 @@ def login_view(request):
                         "login_error": True,
                         "error_message": "Both fields are required.",
                     },
+                    status=400,
                 )
 
             # Authenticate user
@@ -87,6 +96,7 @@ def login_view(request):
                         "login_error": True,
                         "error_message": "Invalid username or password.",
                     },
+                    status=401,
                 )
 
             # Login user
@@ -94,9 +104,11 @@ def login_view(request):
             return redirect("dashboard")
 
         # GET request → show login page
-        return render(request, "gr8tutor/login.html")
+        # return render(request, "gr8tutor/login.html")
 
-    except OperationalError:
+    except OperationalError as e:
+        logger.exception("Database unavailable during login: %s", e)
+
         return render(
             request,
             "gr8tutor/login.html",
@@ -104,6 +116,7 @@ def login_view(request):
                 "login_error": True,
                 "error_message": "System is temporarily unavailable. Please try again shortly.",
             },
+            status=503,
         )
 
 
