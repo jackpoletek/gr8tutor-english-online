@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.contrib import messages
+from django.db import OperationalError
 
 from .models import (
     Message,
@@ -52,41 +53,58 @@ def about(request):
 def contact(request):
     return render(request, "gr8tutor/contact.html")
 
+
 # Authentication views
 def login_view(request):
     if request.user.is_authenticated:
         return redirect("dashboard")
 
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
+    try:
+        if request.method == "POST":
+            username = request.POST.get("username")
+            password = request.POST.get("password")
 
-        if not username or not password:
-            return render(
-                request,
-                "gr8tutor/login.html",
-                {
-                    "login_error": True,
-                    "error_message": "Both fields are required.",
-                },
-            )
+            # Check for missing fields
+            if not username or not password:
+                return render(
+                    request,
+                    "gr8tutor/login.html",
+                    {
+                        "login_error": True,
+                        "error_message": "Both fields are required.",
+                    },
+                )
 
-        user = authenticate(request, username=username, password=password)
+            # Authenticate user
+            user = authenticate(request, username=username, password=password)
 
-        if user is None:
-            return render(
-                request,
-                "gr8tutor/login.html",
-                {
-                    "login_error": True,
-                    "error_message": "Invalid username or password.",
-                },
-            )
+            # Invalid credentials
+            if user is None:
+                return render(
+                    request,
+                    "gr8tutor/login.html",
+                    {
+                        "login_error": True,
+                        "error_message": "Invalid username or password.",
+                    },
+                )
 
-        auth_login(request, user)
-        return redirect("dashboard")
+            # Login user
+            auth_login(request, user)
+            return redirect("dashboard")
 
-    return render(request, "gr8tutor/login.html")
+        # GET request → show login page
+        return render(request, "gr8tutor/login.html")
+
+    except OperationalError:
+        return render(
+            request,
+            "gr8tutor/login.html",
+            {
+                "login_error": True,
+                "error_message": "System is temporarily unavailable. Please try again shortly.",
+            },
+        )
 
 
 def logout_view(request):
