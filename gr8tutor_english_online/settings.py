@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from tkinter import TRUE
 from urllib.parse import urlparse
 import environ
 import dj_database_url
@@ -54,7 +55,9 @@ if DATABASE_URL:
     # Fallback to SQLite for local development
     DATABASES = {
         "default": dj_database_url.config(
-            default=os.environ.get("DATABASE_URL")
+            default=os.environ.get("DATABASE_URL"),
+            conn_max_age=600,
+            ssl_require=TRUE,
         )
     }
 
