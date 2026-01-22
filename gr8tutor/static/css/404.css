@@ -1,0 +1,63 @@
+body {
+    font-family: "Poppins", Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.error-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.error-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.brand {
+    font-size: 1.3rem;
+}
+
+.error-code {
+    font-size: 4rem;
+    font-weight: 800;
+}
+
+.error-title {
+    font-size: 1.3rem;
+}
+
+.error-message {
+    font-size: 0.95rem;
+}
+
+.redirect-info {
+    font-size: 0.85rem;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+    .error-card {
+        max-width: 480px;
+        padding: 2.5rem 2rem;
+    }
+
+    .error-code {
+        font-size: 4.75rem;
+    }
+}
+
+/* Desktop */
+@media (min-width: 992px) {
+    .error-card {
+        max-width: 520px;
+    }
+}

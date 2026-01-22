@@ -202,9 +202,8 @@ def student_dashboard(request):
 # Tutor list (public for students)
 @login_required
 def tutors(request):
-    return HttpResponse("Tutors page.")
-    # tutors = Tutor.objects.all()
-    # return render(request, "gr8tutor/tutors.html", {"tutors": tutors})
+    tutors = Tutor.objects.all()
+    return render(request, "gr8tutor/tutors.html", {"tutors": tutors})
 
 # Tutor managing students
 @login_required
