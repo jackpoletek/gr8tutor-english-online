@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 from urllib.parse import urlparse
 import environ
+import dj_database_url
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -38,25 +39,24 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if DATABASE_URL:
     url = urlparse(DATABASE_URL)
-    
-#    DATABASES = {
-#        'default': {
-#            'ENGINE': 'django.db.backends.postgresql',
-#            'NAME': url.path[1:],
-#            'USER': url.username,
-#            'PASSWORD': url.password,
-#            'HOST': url.hostname,
-#            'PORT': url.port,
-#            }
-#        }
+
+    #    DATABASES = {
+    #        'default': {
+    #            'ENGINE': 'django.db.backends.postgresql',
+    #            'NAME': url.path[1:],
+    #            'USER': url.username,
+    #            'PASSWORD': url.password,
+    #            'HOST': url.hostname,
+    #            'PORT': url.port,
+    #            }
+    #        }
 
     # Fallback to SQLite for local development
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
+        "default": dj_database_url.config(
+            default=os.environ.get("DATABASE_URL")
+        )
+    }
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS",
                          default=[
