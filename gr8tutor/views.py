@@ -127,13 +127,23 @@ def logout_view(request):
 
 
 def register(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
+
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+    
+    # GET request - show registration page
+    if request.method == "GET":
+        return render(request, "gr8tutor/register.html")
+    
+    # POST request - process registration
+    try:
+        username = request.POST.get("username", "").strip()
+        email = request.POST.get("email", "").strip()
         password = request.POST.get("password")
         password_again = request.POST.get("password_again")
-        role = request.POST.get("role")
 
-        if not username or not password or not password_again or not role:
+        # Missing fields
+        if not all ([username, email, password, password_again]):
             return render(
                 request,
                 "gr8tutor/register.html",
@@ -141,8 +151,10 @@ def register(request):
                     "registration_error": True,
                     "error_message": "All fields are required.",
                 },
+                status=400,
             )
-
+        
+        # Passwords do not match
         if password != password_again:
             return render(
                 request,
@@ -151,30 +163,54 @@ def register(request):
                     "registration_error": True,
                     "error_message": "Passwords do not match.",
                 },
+                status=400,
             )
+        
+        # Create user
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password)
+        
+        auth_login(request, user)
+        return redirect("dashboard")
+    
+    # User already exists
+    except IntegrityError:
+        return render(
+            request,
+            "gr8tutor/register.html",
+            {
+                "registration_error": True,
+                "error_message": "Username already exists.",
+            },
+            status=409,
+        )
+    
+    except OperationalError:
+        logger.exception("Database unavailable during registration.")
 
-        if User.objects.filter(username=username).exists():
-            return render(
-                request,
-                "gr8tutor/register.html",
-                {
-                    "registration_error": True,
-                    "error_message": "Username already exists.",
-                },
-            )
+        return render(
+            request,
+            "gr8tutor/register.html",
+            {
+                "registration_error": True,
+                "error_message": "System is temporarily unavailable. Please try again shortly.",
+            },
+            status=503,
+        )
 
-        user = User.objects.create_user(username=username, password=password)
-        profile = UserProfile.objects.create(user=user, role=role)
+        # profile = UserProfile.objects.create(user=user, role=role)
 
-        if role == "tutor":
-            Tutor.objects.create(user_profile=profile)
-        elif role == "student":
-            Student.objects.create(user_profile=profile)
+        # if role == "tutor":
+        #    Tutor.objects.create(user_profile=profile)
+        # elif role == "student":
+        #    Student.objects.create(user_profile=profile)
 
-        messages.success(request, "Account created successfully. You may now log in.")
-        return redirect("login")
+        # messages.success(request, "Account created successfully. You may now log in.")
+        # return redirect("login")
 
-    return render(request, "gr8tutor/register.html")
+    # return render(request, "gr8tutor/register.html")
 
 # Dashboard (role-based redirect)
 @login_required
