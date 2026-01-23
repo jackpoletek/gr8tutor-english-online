@@ -61,53 +61,46 @@ def contact(request):
 def login_view(request):
     if request.user.is_authenticated:
         return redirect("dashboard")
-    
+
     # GET request - show login page
     if request.method == "GET":
         return render(request, "gr8tutor/login.html")
 
-    # POST request - process login
+    # POST request
     try:
-        if request.method == "POST":
-            username = request.POST.get("username", "").strip()
-            password = request.POST.get("password", "").strip()
+        username = request.POST.get("username", "").strip()
+        password = request.POST.get("password", "").strip()
 
-            # Check for missing fields
-            if not username or not password:
-                return render(
-                    request,
-                    "gr8tutor/login.html",
-                    {
-                        "login_error": True,
-                        "error_message": "Both fields are required.",
-                    },
-                    status=400,
-                )
+        # Check for missing fields
+        if not username or not password:
+            return render(
+                request,
+                "gr8tutor/login.html",
+                {
+                    "login_error": True,
+                    "error_message": "Both fields are required.",
+                },
+                status=400,
+            )
 
-            # Authenticate user
-            user = authenticate(request, username=username, password=password)
+        # Authenticate user
+        user = authenticate(request, username=username, password=password)
 
-            # Invalid credentials
-            if user is None:
-                return render(
-                    request,
-                    "gr8tutor/login.html",
-                    {
-                        "login_error": True,
-                        "error_message": "Invalid username or password.",
-                    },
-                    status=401,
-                )
+        # Invalid credentials
+        if user is None:
+            return render(
+                request,
+                "gr8tutor/login.html",
+                {
+                    "login_error": True,
+                    "error_message": "Invalid username or password.",
+                },
+                status=401,
+            )
 
-        # GET request - show login page
-        return render(
-            request,
-            "gr8tutor/login.html",
-            {
-                "registration_message": "Account created successfully. You may now log in.",
-            },
-            status=201,
-        )
+        # Successful login
+        auth_login(request, user)
+        return redirect("dashboard")
 
     except OperationalError as e:
         logger.exception("Database unavailable during login: %s", e)
@@ -133,20 +126,21 @@ def register(request):
 
     if request.user.is_authenticated:
         return redirect("dashboard")
-    
+
     # GET request - show registration page
     if request.method == "GET":
         return render(request, "gr8tutor/register.html")
-    
+
     # POST request - process registration
     try:
         username = request.POST.get("username", "").strip()
         email = request.POST.get("email", "").strip()
         password = request.POST.get("password")
         password_again = request.POST.get("password_again")
+        role = request.POST.get("role")
 
         # Missing fields
-        if not all ([username, email, password, password_again]):
+        if not all([username, email, password, password_again]):
             return render(
                 request,
                 "gr8tutor/register.html",
@@ -156,7 +150,19 @@ def register(request):
                 },
                 status=400,
             )
-        
+
+        # Valid role
+        if role not in ["tutor", "student"]:
+            return render(
+                request,
+                "gr8tutor/register.html",
+                {
+                    "registration_error": True,
+                    "error_message": "Please select a role.",
+                },
+                status=400,
+            )
+
         # Passwords do not match
         if password != password_again:
             return render(
@@ -168,16 +174,26 @@ def register(request):
                 },
                 status=400,
             )
-        
+
         # Create user
         user = User.objects.create_user(
             username=username,
             email=email,
-            password=password)
-        
+            password=password
+            )
+
+        # Create user profile and role-specific profile
+        profile = UserProfile.objects.create(user=user, role=role)
+
+        # Create Tutor or Student profile
+        if role == "tutor":
+            Tutor.objects.create(user_profile=profile)
+        else:
+            Student.objects.create(user_profile=profile)
+
         auth_login(request, user)
         return redirect("dashboard")
-    
+
     # User already exists
     except IntegrityError:
         return render(
@@ -189,7 +205,7 @@ def register(request):
             },
             status=409,
         )
-    
+
     except OperationalError:
         logger.exception("Database unavailable during registration.")
 
@@ -203,13 +219,6 @@ def register(request):
             status=503,
         )
 
-        # profile = UserProfile.objects.create(user=user, role=role)
-
-        # if role == "tutor":
-        #    Tutor.objects.create(user_profile=profile)
-        # elif role == "student":
-        #    Student.objects.create(user_profile=profile)
-
         # messages.success(request, "Account created successfully. You may now log in.")
         # return redirect("login")
 
@@ -218,11 +227,7 @@ def register(request):
 # Dashboard (role-based redirect)
 @login_required
 def dashboard(request):
-    if user_is_tutor(request.user):
-        return redirect("dashboard")
-    if user_is_student(request.user):
-        return redirect("dashboard")
-    return redirect("choose_role")
+    return render(request, "gr8tutor/dashboard.html")
 
 # Tutor & Student dashboards
 @login_required
