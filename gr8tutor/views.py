@@ -99,12 +99,15 @@ def login_view(request):
                     status=401,
                 )
 
-            # Login user
-            auth_login(request, user)
-            return redirect("dashboard")
-
-        # GET request → show login page
-        # return render(request, "gr8tutor/login.html")
+        # GET request - show login page
+        return render(
+            request,
+            "gr8tutor/login.html",
+            {
+                "registration_message": "Account created successfully. You may now log in.",
+            },
+            status=201,
+        )
 
     except OperationalError as e:
         logger.exception("Database unavailable during login: %s", e)
