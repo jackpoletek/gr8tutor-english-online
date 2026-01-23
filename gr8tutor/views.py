@@ -1,3 +1,4 @@
+import profile
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
@@ -180,10 +181,12 @@ def register(request):
             username=username,
             email=email,
             password=password
-            )
+        )
 
-        # Create user profile and role-specific profile
-        profile = UserProfile.objects.create(user=user, role=role)
+        # Create user profile automatically
+        profile = user.userprofile
+        profile.role = role
+        profile.save()
 
         # Create Tutor or Student profile
         if role == "tutor":
@@ -191,8 +194,15 @@ def register(request):
         else:
             Student.objects.create(user_profile=profile)
 
-        auth_login(request, user)
-        return redirect("dashboard")
+        # Successful registration
+        return render(
+            request,
+            "gr8tutor/register.html",
+            {
+                "registration_success": True,
+                "registration_message": "Account created successfully. You can now log in.",
+            }
+        )
 
     # User already exists
     except IntegrityError:
@@ -218,6 +228,7 @@ def register(request):
             },
             status=503,
         )
+
 
 # Dashboard (role-based redirect)
 @login_required
