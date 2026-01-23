@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.contrib import messages
-from django.db import OperationalError
+from django.db import OperationalError, IntegrityError
 import logging
 
 from .models import (
@@ -216,9 +216,9 @@ def register(request):
 @login_required
 def dashboard(request):
     if user_is_tutor(request.user):
-        return redirect("tutor_dashboard")
+        return redirect("dashboard")
     if user_is_student(request.user):
-        return redirect("student_dashboard")
+        return redirect("dashboard")
     return redirect("choose_role")
 
 # Tutor & Student dashboards
@@ -231,7 +231,7 @@ def tutor_dashboard(request):
     relationships = StudentTutorRelationship.objects.filter(tutor=tutor)
     return render(
         request,
-        "gr8tutor/tutor_dashboard.html",
+        "gr8tutor/dashboard.html",
         {"tutor": tutor, "relationships": relationships},
     )
 
@@ -244,7 +244,7 @@ def student_dashboard(request):
     relationships = StudentTutorRelationship.objects.filter(student=student)
     return render(
         request,
-        "gr8tutor/student_dashboard.html",
+        "gr8tutor/dashboard.html",
         {"student": student, "relationships": relationships},
     )
 
