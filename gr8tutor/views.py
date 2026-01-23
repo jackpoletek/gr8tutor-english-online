@@ -219,11 +219,6 @@ def register(request):
             status=503,
         )
 
-        # messages.success(request, "Account created successfully. You may now log in.")
-        # return redirect("login")
-
-    # return render(request, "gr8tutor/register.html")
-
 # Dashboard (role-based redirect)
 @login_required
 def dashboard(request):

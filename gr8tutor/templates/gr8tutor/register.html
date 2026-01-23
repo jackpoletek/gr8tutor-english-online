@@ -53,7 +53,7 @@
         </div>
     </div>
 </section>
-{% if register_error %}
+{% if registration_error %}
 <script>
     Swal.fire({
         icon: 'error',
@@ -63,7 +63,15 @@
     });
 </script>
 {% endif %}
-<div id="js-flags" data-registration-success="{{ registration_success|default:'false' }}"
-    data-registration-message="{{ registration_message|default:''|escapejs }}">
-</div>
+{% if registration_success %}
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: '{{ registration_message|escapejs }}'
+    }).then(() => {
+        window.location.href = "{% url 'login' %}";
+    });
+</script>
+{% endif %}
 {% endblock %}
