@@ -73,9 +73,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* Reusable SweetAlert helper */
-  function showSwal(options) {
-    if (typeof Swal !== "undefined") {
-      Swal.fire(options);
+  function showSweetalert2(options) {
+    if (typeof Sweetalert2 !== "undefined") {
+      Sweetalert2.fire(options);
     } else {
       alert(options.text || "Something went wrong.");
     }
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* Registration success */
     if (registrationSuccess) {
-      showSwal({
+      showSweetalert2({
         icon: "success",
         title: "Registration complete",
         text: registrationMessage || "Thank you for registering on Gr8tutor!",
@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* Login error */
     if (loginError) {
-      showSwal({
+      showSweetalert2({
         icon: "error",
         title: "Login failed",
         text: loginErrorMessage || "Invalid login details.",
@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* Registration error */
     if (registrationError) {
-      showSwal({
+      showSweetalert2({
         icon: "error",
         title: "Registration error",
         text: registrationErrorMessage || "Please check the form.",
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
         messageInput.classList.add("is-invalid");
 
-        showSwal({
+        showSweetalert2({
           icon: "warning",
           text: "You cannot send an empty message.",
         });

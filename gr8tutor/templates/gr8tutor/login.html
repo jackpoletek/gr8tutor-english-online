@@ -48,7 +48,7 @@
 </section>
 {% if login_error %}
 <script>
-    Swal.fire({
+    Sweetalert2.fire({
         icon: 'error',
         title: 'Login failed',
         text: '{{ error_message|escapejs }}',
