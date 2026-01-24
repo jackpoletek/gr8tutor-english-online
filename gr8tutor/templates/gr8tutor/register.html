@@ -59,6 +59,7 @@
     data-registration-error="{{ registration_error|default:'false' }}"
     data-registration-error-message="{{ error_message|default:''|escapejs }}">
 </div>
+
 {% if registration_error %}
 <script>
     Sweetalert2.fire({
