@@ -147,8 +147,7 @@ def register(request):
                 {
                     "registration_error": True,
                     "error_message": "All fields are required.",
-                },
-                status=400,
+                }
             )
 
         # Valid role
@@ -159,8 +158,7 @@ def register(request):
                 {
                     "registration_error": True,
                     "error_message": "Please select a role.",
-                },
-                status=400,
+                }
             )
 
         # Passwords do not match
@@ -171,8 +169,28 @@ def register(request):
                 {
                     "registration_error": True,
                     "error_message": "Passwords do not match.",
-                },
-                status=400,
+                }
+            )
+
+        # Check if username or email already exists
+        if User.objects.filter(username=username).exists():
+            return render(
+                request,
+                "gr8tutor/register.html",
+                {
+                    "registration_error": True,
+                    "error_message": "Username already exists.",
+                }
+            )
+
+        if User.objects.filter(email=email).exists():
+            return render(
+                request,
+                "gr8tutor/register.html",
+                {
+                    "registration_error": True,
+                    "error_message": "Email already exists.",
+                }
             )
 
         # Create user
@@ -204,16 +222,16 @@ def register(request):
         )
 
     # User already exists
-    except IntegrityError:
-        return render(
-            request,
-            "gr8tutor/register.html",
-            {
-                "registration_error": True,
-                "error_message": "Username already exists.",
-            },
-            status=409,
-        )
+    # except IntegrityError:
+    #     return render(
+    #         request,
+    #         "gr8tutor/register.html",
+    #         {
+    #             "registration_error": True,
+    #             "error_message": "Username already exists.",
+    #         },
+    #         status=409,
+    #     )
 
     except OperationalError:
         logger.exception("Database unavailable during registration.")
@@ -224,8 +242,7 @@ def register(request):
             {
                 "registration_error": True,
                 "error_message": "System is temporarily unavailable. Please try again shortly.",
-            },
-            status=503,
+            }
         )
 
 

@@ -59,4 +59,28 @@
     data-registration-error="{{ registration_error|default:'false' }}"
     data-registration-error-message="{{ error_message|default:''|escapejs }}">
 </div>
+{% if registration_error %}
+<script>
+    Sweetalert2.fire({
+        icon: 'error',
+        title: 'Registration failed',
+        text: '{{ error_message|escapejs }}',
+        confirmButtonText: 'OK'
+    });
+</script>
+{% endif %}
+
+{% if registration_success %}
+<script>
+    Sweetalert2.fire({
+        icon: 'success',
+        title: 'Success',
+        text: '{{ registration_message|escapejs }}',
+        confirmButtonText: 'Go to login'
+    }).then(() => {
+        window.location.href = "{% url 'login' %}";
+    });
+</script>
+{% endif %}
+
 {% endblock %}

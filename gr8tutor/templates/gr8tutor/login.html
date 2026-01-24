@@ -46,6 +46,11 @@
         </div>
     </div>
 </section>
+<!-- JavaScript flags -->
+<div id="js-flags" data-login-error="{{ login_error|default:'false' }}"
+    data-login-error-message="{{ error_message|default:''|escapejs }}" data-registration-success="false"
+    data-registration-message="" data-registration-error="false" data-registration-error-message="">
+</div>
 {% if login_error %}
 <script>
     Sweetalert2.fire({
@@ -56,9 +61,5 @@
     });
 </script>
 {% endif %}
-<!-- JavaScript flags -->
-<div id="js-flags" data-login-error="{{ login_error|default:'false' }}"
-    data-login-error-message="{{ error_message|default:''|escapejs }}" data-registration-success="false"
-    data-registration-message="" data-registration-error="false" data-registration-error-message="">
-</div>
+
 {% endblock %}
