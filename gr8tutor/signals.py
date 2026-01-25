@@ -13,4 +13,3 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     # Ensure profile always saves when User is saved
     instance.userprofile.save()
-    
