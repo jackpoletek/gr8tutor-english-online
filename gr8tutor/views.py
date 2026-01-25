@@ -122,7 +122,7 @@ def logout_view(request):
     return redirect("index")
 
 
-def register(request):
+def register_view(request):
 
     if request.user.is_authenticated:
         return redirect("dashboard")
