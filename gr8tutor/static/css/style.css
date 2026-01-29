@@ -310,6 +310,10 @@ a:hover {
     .col-sm-6 {
         width: 50%;
     }
+
+    .tile-break {
+        display: none;
+    }
 }
 
 /* Tablet */
@@ -320,6 +324,10 @@ a:hover {
 
     .container {
         max-width: 720px;
+    }
+
+    .tile-break {
+        display: none;
     }
 }
 
@@ -344,6 +352,10 @@ a:hover {
 
     .container {
         max-width: 960px;
+    }
+
+    .title-break {
+        display: inline;
     }
 }
 
