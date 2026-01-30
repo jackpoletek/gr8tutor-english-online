@@ -81,14 +81,22 @@ gr8tutor/<br>
 ├── signals.py<br>
 ├── templates/gr8tutor/<br>
 │ ├── index.html<br>
+| ├── about.html<br>
 │ ├── dashboard.html<br>
 │ ├── login.html<br>
 │ ├── register.html<br>
 │ └── chat.html<br>
-└── static/js/
+└── static
 
-yaml
-Copy code
+---
+
+## Bug Fixes
+
+### Bug 1 - Undefined tutor
+- Fix: tutor = get_object_or_404(Tutor, id=tutor_id)
+
+### Bug 2 - .get().exists() misuse
+StudentTutorRelationship.objects.filter(...).exists()
 
 ---
 
