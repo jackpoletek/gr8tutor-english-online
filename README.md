@@ -75,17 +75,17 @@ The platform focuses on:
 
 gr8tutor/
 │
-├── models.py # Core database models
-├── views.py # Application logic and user flows
-├── urls.py # App routes
-├── signals.py # Auto-create UserProfile on registration
-├── templates/gr8tutor/ # HTML templates (Bootstrap)
+├── models.py
+├── views.py
+├── urls.py
+├── signals.py
+├── templates/gr8tutor/
 │ ├── index.html
 │ ├── dashboard.html
 │ ├── login.html
 │ ├── register.html
 │ └── chat.html
-└── static/js/ # Vanilla JS scripts for frontend CRUD & messaging
+└── static/js/
 
 yaml
 Copy code
