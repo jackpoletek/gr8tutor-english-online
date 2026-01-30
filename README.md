@@ -73,18 +73,18 @@ The platform focuses on:
 
 ## App Structure
 
-gr8tutor/
-│
-├── models.py
-├── views.py
-├── urls.py
-├── signals.py
-├── templates/gr8tutor/
-│ ├── index.html
-│ ├── dashboard.html
-│ ├── login.html
-│ ├── register.html
-│ └── chat.html
+gr8tutor/<br>
+│<br>
+├── models.py<br>
+├── views.py<br>
+├── urls.py<br>
+├── signals.py<br>
+├── templates/gr8tutor/<br>
+│ ├── index.html<br>
+│ ├── dashboard.html<br>
+│ ├── login.html<br>
+│ ├── register.html<br>
+│ └── chat.html<br>
 └── static/js/
 
 yaml
