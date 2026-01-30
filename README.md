@@ -116,7 +116,7 @@ Message<br>
 └── time
 
 
-Ensures:
+This schema ensures:
 
 - Each user has exactly one role  
 - Unique tutor-student relationships  
@@ -263,7 +263,7 @@ Focus:
 Run tests:<br>
 
 ```bash
-python manage.py test gr8tutor.tests
+python manage.py test gr8tutor.tests<br>
 
 ---
 
