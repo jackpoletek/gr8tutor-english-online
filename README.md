@@ -263,7 +263,8 @@ Focus:
 Run tests:<br>
 
 ```bash
-python manage.py test gr8tutor.tests<br>
+python manage.py test gr8tutor.tests
+```
 
 ---
 
