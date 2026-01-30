@@ -297,7 +297,7 @@ message = "Request sent"
 #### Bug 6 - JavaScript not loading
 - Problem: Static JS file was not recognised.
 - Fix: Static file path was corrected and file consistently was renamed <br>
-- ```bash
+```bash
   Correct static paths
   ```
 ```bash
