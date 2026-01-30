@@ -299,7 +299,7 @@ message = "Request sent"
 - Fix: Static file path was corrected and file consistently was renamed <br>
 - ```bash
   Correct static paths
-  ```<br>
+  ```
 ```bash
 Ran collectstatic
 ```
