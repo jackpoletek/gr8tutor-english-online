@@ -1,73 +1,126 @@
-#  Gr8Tutor — Tutor Marketplace Platform (online marketplace connecting students with qualified English tutors for personalised language learning)
+# Gr8Tutor is a digital marketplace dedicated to English language learning. It connects students seeking personalised instruction with a curated network of qualified and experienced tutors. <br>
 
-Gr8Tutor is a **fullstack Django + Vanilla JavaScript web application** that connects **students and tutors** in an intuitive and secure online environment.  
-Tutors can publish profiles, manage student requests, and chat with confirmed learners — while students can easily browse tutors, send requests, and communicate through a built-in messaging system.
+[View Live Site](https://gr8tutor-english-online-5967a17d29d9.herokuapp.com/)    <br>
+[View GitHub Repository](https://github.com/jackpoletek/gr8tutor-english-online) <br>
+
+![gr8tutor](https://github.com/jackpoletek/gr8tutor-english-online/blob/main/screenshots/home%20page/home%20page_screenshot.jpg)
 
 ---
 
 ## Table of Contents
-1. [Overview](#-overview)
-2. [Features](#-features)
-3. [Tech Stack](#-tech-stack)
-4. [Database Models](#-database-models)
-5. [App Structure](#-app-structure)
-6. [Setup & Installation](#-setup--installation)
-7. [Usage](#-usage)
-8. [Testing](#-testing)
-9. [Project Highlights](#-project-highlights)
-10. [Future Improvements](#-future-improvements)
-11. [License](#-license)
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Database Models](#database-models)
+- [App Structure](#app-structure)
+- [Project Goals](#project-goals)
+- [UX](#ux)
+- [Features & User Story Alignment](#features--user-story-alignment)
+- [Template Attribution](#template-attribution)
+- [Error Handling](#error-handling)
+- [Testing](#testing)
+- [Bug Fixes](#bug-fixes)
+- [Security](#security)
+- [Setup & Installation](#setup--installation)
+- [Usage](#usage)
+- [Deployment](#deployment)
+- [Validation and Performance](#validation-and-performance)
+- [Project Highlights](#project-highlights)
+- [Future Improvements](#future-improvements)
+- [Credits](#credits)
+- [License](#license)
 
 ---
 
 ## Overview
 
-Gr8Tutor provides a **marketplace experience** for tutors and students using a unified authentication system.  
-Users sign up once and can register as either a **Tutor** or **Student**, each receiving a role-based dashboard.  
+**Gr8Tutor** is a full-stack **Django + Vanilla JavaScript** web application that connects students and tutors in an intuitive and secure online environment.
+
+Tutors can publish profiles, manage student requests, and chat with confirmed learners - while students can browse tutors, send requests, and communicate through a built-in messaging system.
+
+The project demonstrates:
+
+- Full-stack web development using **Django**, **PostgreSQL**, and **Bootstrap**
+- User-centered design principles and structured UX planning
+- Role-based dashboards for tutors and students
+
+Gr8Tutor provides a marketplace experience using a unified authentication system.  
+Users sign up once and register as either a **Tutor** or **Student**.
 
 The platform focuses on:
-- clean and maintainable **Django backend logic**,  
-- lightweight **frontend interactivity** powered by pure JavaScript,  
-- and **PostgreSQL** database for production-level data integrity.
+
+- Clean and maintainable Django backend logic  
+- Lightweight frontend interactivity using pure JavaScript  
+- PostgreSQL for production-level data integrity  
 
 ---
 
 ## Features
 
-- **Unified Authentication** — Shared Django `User` model extended via `UserProfile` (roles: tutor/student/admin).  
-- **Tutor Management (CRUD)** — Tutors can create, edit, and delete profiles directly from the frontend.  
-- **Student Requests** — Students can browse tutors and send callback requests.  
-- **Tutor Confirmations** — Tutors can approve or reject student connections.  
-- **Messaging System** — Secure one-to-one chat between confirmed tutor–student pairs.  
-- **Role Differentiation** — Each role has unique permissions and views.  
-- **Signals** — Django signals automatically create `UserProfile` entries on user registration.  
-- **Automated Tests** for backend flows and manual JavaScript test plan.  
+- **Unified Authentication** - Shared Django `User` model extended via `UserProfile` (roles: tutor/student/admin)  
+- **Tutor Management (CRUD)** - Create, edit, delete tutor profiles from the frontend  
+- **Student Requests** - Browse tutors and send callback requests  
+- **Tutor Confirmations** - Approve or reject student connections  
+- **Messaging System** - Secure one-to-one chat between confirmed pairs  
+- **Role Differentiation** - Each role has unique permissions and views  
+- **Signals** - Auto-create `UserProfile` on registration  
+- **Automated Tests** - Backend tests + manual JavaScript test plan  
 
 ---
 
 ## Tech Stack
 
 | Layer | Technology |
-|-------|-------------|
+|------|-------------|
 | Backend | Django 5.x |
 | Frontend | HTML5, CSS3, Bootstrap 5, Vanilla JS |
 | Database | PostgreSQL |
 | ORM | Django ORM |
-| Testing | Django `unittest` (Python) + manual JS tests |
+| Testing | Django `unittest` + manual JS tests |
 | Version Control | Git & GitHub |
 | Language | Python 3.10+ |
+| Additional | SweetAlert2, Gunicorn, Whitenoise, Heroku |
 
 ---
 
 ## Database Models
 
 | Model | Description |
-|--------|--------------|
-| **UserProfile** | Extends Django’s `User`, adds a `role` field (`admin`, `tutor`, `student`). |
-| **Tutor** | Connected via OneToOneField to `UserProfile`; includes `bio`, `hourly_rate`, `subject`, and `experience`. |
-| **Student** | OneToOneField to `UserProfile`; contains learning `goals`. |
-| **StudentTutorRelationship** | Links a student to a tutor, tracks active and pending requests. |
-| **Message** | Stores chat messages between verified tutor–student pairs. |
+|------|-------------|
+| `UserProfile` | Extends Django `User`, adds role field |
+| `Tutor` | OneToOne -> UserProfile; bio, rate, subject, experience |
+| `Student` | OneToOne -> UserProfile; learning goals |
+| `StudentTutorRelationship` | Links students to tutors |
+| `Message` | Stores chat messages |
+
+### Database Schema
+
+User<br>
+└── UserProfile (role)
+
+Tutor<br>
+└── OneToOne -> UserProfile
+
+Student<br>
+└── OneToOne -> UserProfile
+
+StudentTutorRelationship<br>
+└── ForeignKey -> Student<br>
+└── ForeignKey -> Tutor<br>
+└── is_active
+
+Message<br>
+└── ForeignKey -> sender (User)<br>
+└── ForeignKey -> recipient (User)<br>
+└── text<br>
+└── time
+
+
+Ensures:
+
+- Each user has exactly one role  
+- Unique tutor-student relationships  
+- Traceable message history  
 
 ---
 
@@ -81,12 +134,136 @@ gr8tutor/<br>
 ├── signals.py<br>
 ├── templates/gr8tutor/<br>
 │ ├── index.html<br>
-| ├── about.html<br>
 │ ├── dashboard.html<br>
 │ ├── login.html<br>
 │ ├── register.html<br>
 │ └── chat.html<br>
 └── static
+
+
+---
+
+## Project Goals
+
+### Business Goals
+- Match students with tutors  
+- Separate user roles  
+- Support communication  
+- Enable future monetisation  
+- Demonstrate Django competence  
+
+### User Goals
+- Secure registration/login  
+- Browse tutors  
+- Request lessons  
+- Message tutors  
+- Manage profiles  
+
+---
+
+## UX
+
+### Target Audience
+- Adult English learners  
+- Independent tutors  
+- Desktop & mobile users  
+
+### User Stories
+- As a student, I want to find a tutor easily  
+- As a tutor, I want to receive lesson requests  
+- As a user, I want to register and log in securely  
+- As a student, I want to message my tutor  
+
+UX prioritises:
+
+- Clear role separation  
+- Predictable navigation  
+- Minimal forms  
+- Immediate feedback  
+
+### Wireframes
+Initial wireframes were designed in Figma during the early planning stage to map out page layouts, information structure, and user flows for desktop, tablet, and mobile screens.<br>
+The wireframes helped achieve:
+- A consistent and predictable experience across different devices
+- Clear distinction between tutor and student interactions
+- Straightforward navigation between key features such as registration, dashboards, and messaging
+- Continuous visibility of tutor listings, lesson requests, and conversations
+
+<br>The completed application closely reflects these wireframes in terms of layout, structure, and interaction behaviour.
+
+#### Desktop (992px)
+<img src="https://github.com/jackpoletek/gr8tutor-english-online/blob/main/wireframes/Wireframe_desktop(992px)%20-%20Home.jpg" alt="Desktop (992px) - Home Page" width=35% height=35%/>&nbsp;&nbsp;
+
+#### Tablet (768px)
+<img src="https://github.com/jackpoletek/gr8tutor-english-online/blob/main/wireframes/Wireframe_tablet(768px)%20-%20Home.jpg" alt="Tablet (768px) - Home Page" width=28% height=28%/>&nbsp;&nbsp;
+
+#### Mobile (576px)
+<img src="https://github.com/jackpoletek/gr8tutor-english-online/blob/main/wireframes/Wireframe_mobile(576px)%20-%20Home.jpg" alt="Mobile (576px) - Home Page" width=20% height=20%/>&nbsp;&nbsp;
+
+[View all wireframes](https://github.com/jackpoletek/gr8tutor-english-online/tree/main/wireframes)
+
+---
+
+## Features & User Story Alignment
+
+### Authentication & Roles
+- Role-based registration  
+- Secure login/logout  
+- Django auth backend  
+
+### Tutor Profiles
+- Discoverable tutor listings  
+
+### Lesson Requests
+- Student -> Tutor requests  
+- Tutor approval  
+- Chat unlocked after approval  
+
+### Messaging
+- Chat-style UI  
+- Database persistence  
+- Permission checks  
+
+---
+
+## Template Attribution
+
+Design inspired by:  
+**Tuturn - Online Tuition & Tutor Marketplace WordPress Theme** (ThemeForest)
+
+Used as reference only; templates were rebuilt for Django.
+
+---
+
+## Error Handling
+
+- Custom 404 page  
+- Controlled error routing  
+
+---
+
+## Testing
+
+### Manual Testing
+
+| Feature | Action | Expected | Result |
+|--------|--------|----------|--------|
+| Register Student | Submit form | Account created | Pass |
+| Login | Valid credentials | Logged in | Pass |
+| Lesson Request | Submit | Saved | Pass |
+| Messaging | Send message | Displayed | Pass |
+
+### Automated Testing
+
+Focus:
+- Role creation  
+- Profile linking  
+- Signal execution  
+
+Run tests:<br>
+
+```bash
+python manage.py test gr8tutor.tests
 
 ---
 
@@ -96,100 +273,126 @@ gr8tutor/<br>
 - Fix: tutor = get_object_or_404(Tutor, id=tutor_id)
 
 ### Bug 2 - .get().exists() misuse
-StudentTutorRelationship.objects.filter(...).exists()
+- Fix: StudentTutorRelationship.objects.filter(...).exists()
+
+### Bug 3 - User called as function
+- Fix: user_to_delete.delete()
+
+### Bug 4 - Unassigned variable
+- Fix: <br>
+if not created:
+    message = "Request already exists"
+else:
+message = "Request sent"
+
+### Bug 5 - No feedback
+- Fix: Implemented SweetAlert2 modals
+
+### Bug 6 - JS not loading
+- Fix: <br>Correct static paths<br>
+Ran collectstatic
 
 ---
 
-## Setup & Installation
+## Security
+- Environment variables for secrets
+- DEBUG=False
+- CSRF protection
+- Hashed passwords
+- HTTPS (Heroku)
+- Django ORM SQL protection
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/yourusername/gr8tutor.git
-cd gr8tutor
-2. Create & Activate Virtual Environment
-bash
-Copy code
-python -m venv venv
-source venv/bin/activate        # Mac/Linux
-venv\Scripts\activate           # Windows
-3. Install Dependencies
-bash
-Copy code
-pip install -r requirements.txt
-4. Apply Migrations
-bash
-Copy code
-python manage.py migrate
-5. Create a Superuser (optional)
-bash
-Copy code
-python manage.py createsuperuser
-6. Run the Development Server
-bash
-Copy code
-python manage.py runserver
-Now visit: http://127.0.0.1:8000/
+---
 
-Usage
-Register a new user or log in.
+### Setup & Installation
+- git clone https://github.com/jackpoletek/gr8tutor-english-online.git
+- cd gr8tutor-english-online
+- python -m venv venv
+- source venv/bin/activate  # Linux/Mac
+- venv\Scripts\activate     # Windows
+- pip install -r requirements.txt
+- python manage.py migrate
+- python manage.py runserver
+- Usage
+- Register
+- Visit: http://127.0.0.1:8000/
 
-Choose a role (Tutor or Student) upon first login.
+---
 
-If a Tutor, complete your profile and manage student requests.
+### Usage
+- Register and log in
+- Choose Tutor or Student
+- Tutors manage profiles
+- Students browse and request
+- Confirmed users can chat
 
-If a Student, browse tutors and request a callback.
+---
 
-Confirmed users can exchange messages through the chat view.
+## Deployment
+Deployed on Heroku<br>
+Steps:
+- Create app
+- Add config vars
+- Configure Gunicorn
+- Configure Whitenoise
+- Run migrations
+- Collect static files
+- Push to Heroku
 
-Admins can access all users and delete profiles when needed.
+---
 
-Testing
-Automated Python Tests
-Run all Django test cases from the project root:
+## Validation and Performance
 
-bash
-Copy code
-python manage.py test gr8tutor.tests
-Manual JS Tests
-Open browser console in the dashboard or tutor list page.
+- W3C HTML Checker - Passed<br>
+<img src="https://github.com/jackpoletek/gr8tutor-english-online/blob/main/screenshots/validators/HTML_checker%20-%20Home%20Page.jpg" alt="W3C HTML Checker" width=50% height=50%/><br>
 
-Simulate button clicks and CRUD actions to verify dynamic behavior.
+- W3C CSS Validator - Passed<br>
+<img src="https://github.com/jackpoletek/gr8tutor-english-online/blob/main/screenshots/validators/CSS_validator%20-%20Home%20Page.jpg" alt="W3C CSS Validator" width=50% height=50%/><br>
 
-Check for error messages, validation, and DOM updates.
+- JSHint - No critical issues<br>
+<img src="https://github.com/jackpoletek/gr8tutor-english-online/blob/main/screenshots/validators/JS_Hint%20-%20Home%20Page.jpg" alt="JSHint" width=50% height=50%/><br>
 
-The test suite validates:
+- GTmetrix Audit - Performance<br>
+<img src="https://github.com/jackpoletek/gr8tutor-english-online/blob/main/screenshots/web%20test/Web%20Test%20-%20GTmetrix_performance.jpg" alt="GTmetrix Score - Performance" width=50% height=50%/><br>
+- GTmetrix Audit - Summary<br>
+<img src="https://github.com/jackpoletek/gr8tutor-english-online/blob/main/screenshots/web%20test/Web%20Test%20-%20GTmetrix_summary.jpg" alt="GTmetrix Score - Summary" width=50% height=50%/><br>
+- GTmetrix Audit - Structure<br>
+<img src="https://github.com/jackpoletek/gr8tutor-english-online/blob/main/screenshots/web%20test/Web%20Test%20-%20GTmetrix_structure.jpg" alt="GTmetrix Score - Structure" width=50% height=50%/><br>
 
-User registration and login
+---
 
-Role assignment logic
+## Project Highlights
+- Strict role separation
+- Clear ORM relationships
+- Secure access control
+- Reusable dashboards
+- Predictable user flow
 
-Tutor–student relationship management
+---
 
-Messaging and chat permissions
+## Future Improvements
+- WebSocket chat
+- Email/SMS notifications
+- Tutor ratings
+- Pagination & filters
+- REST API
+- Payments
+- Scheduling
+- Video lessons
+- Mobile app
 
-Data integrity after deletions
+---
 
-Project Highlights
-Cleanly separated roles and logic — prevents accidental role-switching.
+## Credits
 
-Clear data relationships using Django ORM.
+### Code:
+- Django docs
+- Bootstrap docs
+- SweetAlert2
 
-Robust access control (e.g. only tutors can confirm students).
-
-Reusable dashboard views with Bootstrap components.
-
-Consistent user flow from registration → dashboard → messaging.
-
-Future Improvements
-Add real-time chat with WebSockets (Django Channels).
-
-Integrate email or SMS notifications for requests and confirmations.
-
-Enable profile images and rating system for tutors.
-
-Implement pagination and search filters for tutor browsing.
-
-Add REST API endpoints for mobile app or SPA integration.
-
-License
-This project is licensed under the MIT License — feel free to use, modify, and distribute with attribution.
+### Acknowledgements:
+#### I would like to express my gratitude to:
+- My lecturer and mentor
+- City of Bristol College
+- Code Institute
+- And a special thank you to Urszula.
