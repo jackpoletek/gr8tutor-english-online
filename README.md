@@ -270,28 +270,39 @@ python manage.py test gr8tutor.tests
 
 ## Bug Fixes
 
-### Bug 1 - Undefined tutor
+#### Bug 1 - Undefined tutor
+- Problem: Tutor variable was not defined when submitting a request.
 - Fix: tutor = get_object_or_404(Tutor, id=tutor_id)
 
-### Bug 2 - .get().exists() misuse
+#### Bug 2 - Incorrect use of .get().exists() misuse
+- Problem: .get() returns an object, not a queryset.
 - Fix: StudentTutorRelationship.objects.filter(...).exists()
 
-### Bug 3 - User called as function
+#### Bug 3 - Calling a User object as a function
+- Problem: user_to_delete() caused a TypeError.
 - Fix: user_to_delete.delete()
 
-### Bug 4 - Unassigned variable
+#### Bug 4 - Unassigned variable from get_or_create()
+- Problem: message was not always assigned.
 - Fix: <br>
 if not created:
     message = "Request already exists"
 else:
 message = "Request sent"
 
-### Bug 5 - No feedback
-- Fix: Implemented SweetAlert2 modals
+#### Bug 5 - No registration/login feedback
+- Problem: Users received no success or error feedback.
+- Fix: SweetAlert2 modals were implemented for Registration success, Registration failure, Login failure
 
-### Bug 6 - JS not loading
-- Fix: <br>Correct static paths<br>
+#### Bug 6 - JavaScript not loading
+- Problem: Static JS file was not recognised.
+- Fix: Static file path was corrected and file consistently was renamed <br>
+- ```bash
+  Correct static paths
+  ```<br>
+```bash
 Ran collectstatic
+```
 
 ---
 
