@@ -34,22 +34,8 @@ DEBUG = os.environ.get("DEBUG") == "True"
 # If DATABASE_URL is present use it
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
-if DATABASE_URL:
-    url = urlparse(DATABASE_URL)
-
-    #    DATABASES = {
-    #        'default': {
-    #            'ENGINE': 'django.db.backends.postgresql',
-    #            'NAME': url.path[1:],
-    #            'USER': url.username,
-    #            'PASSWORD': url.password,
-    #            'HOST': url.hostname,
-    #            'PORT': url.port,
-    #            }
-    #        }
-
-    # Fallback to SQLite for local development
-    DATABASES = {
+# DB Configuration using dj_database_url
+DATABASES = {
         "default": dj_database_url.config(
             default=os.environ.get("DATABASE_URL"),
             conn_max_age=600,
@@ -57,13 +43,14 @@ if DATABASE_URL:
         )
     }
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS",
-                         default=[
-                             "127.0.0.1",
-                             "localhost",
-                             "gr8tutor-english-online.herokuapp.com",
-                             ".herokuapp.com",
-                             ])
+ALLOWED_HOSTS = env.list(
+    "ALLOWED_HOSTS",
+    default=[
+        "127.0.0.1",
+        "localhost",
+        ".onrender.com",
+        ],
+    )
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -141,16 +128,17 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
 STATIC_URL = "/static/"
-
-# Static files for development
-
-# Static files for production
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# WhiteNoise configuration for serving static files
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Media files (user uploads)
 MEDIA_URL = '/media/'

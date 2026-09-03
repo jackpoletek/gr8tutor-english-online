@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 
+
 # Create your models here.
 class UserProfile(models.Model):
     ROLE_CHOICES = (
@@ -16,7 +17,7 @@ class UserProfile(models.Model):
     # Safe profile creation
     role = models.CharField(max_length=10, choices=ROLE_CHOICES,
                             blank=True, null=True, default='')
-    
+
     def unique_role(self, new_role):
         # Admin can be both tutor and student
         if self.role == "admin":
@@ -30,6 +31,7 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} ({self.role})"
+
 
 class Tutor(models.Model):
     user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
@@ -48,10 +50,11 @@ class Tutor(models.Model):
                                                              is_active=True):
             students.append(rship.student)
         return students
-    
+
     def save(self, *args, **kwargs):
         self.user_profile.unique_role("tutor")
         super().save(*args, **kwargs)
+
 
 class Student(models.Model):
     user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
@@ -59,10 +62,11 @@ class Student(models.Model):
 
     def __str__(self):
         return self.user_profile.user.username
-    
+
     def save(self, *args, **kwargs):
         self.user_profile.unique_role("student")
         super().save(*args, **kwargs)
+
 
 class StudentTutorRelationship(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -76,6 +80,7 @@ class StudentTutorRelationship(models.Model):
     def __str__(self):
         status = "Active" if self.is_active else "Pending"
         return f"{self.student} - {self.tutor} ({status})"
+
 
 # Messaging between Tutor and Student
 class Message(models.Model):
@@ -91,11 +96,11 @@ class Message(models.Model):
 
     def __str__(self):
         return f"From {self.sender} to {self.recipient} at {self.time}"
-    
+
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     # Automatically create UserProfile when a new User is created
     from .models import UserProfile
     if created:
         UserProfile.objects.create(user=instance)
-    
