@@ -3,16 +3,23 @@ services:
     name: gr8tutor-english-online
     runtime: python
     rootDir: .
-    buildCommand: "pip install -r requirements.txt"
+    buildCommand: "./build.sh"
     startCommand: "gunicorn gr8tutor_english_online.wsgi:application --bind 0.0.0.0:$PORT"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: "gr8tutor_english_online.settings"
+
       - key: SECRET_KEY
         generateValue: true
+
       - key: DEBUG
         value: "False"
+
       - key: ALLOWED_HOSTS
-        value: ".onrender.com,localhost,127.0.0.1,gr8tutor-english-online.onrender.com"
+        value: ".onrender.com,localhost,127.0.0.1"
+
       - key: WEB_CONCURRENCY
         value: "4"
+
+      - key: DATABASE_URL
+        sync: false

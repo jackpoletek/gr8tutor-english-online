@@ -153,7 +153,7 @@ LOGOUT_REDIRECT_URL = 'index'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Heroku - production security
+# Render - production security
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
@@ -168,7 +168,7 @@ else:
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
 
-# Logging to help debug on Heroku
+# Logging to help debug on Render
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
