@@ -1,6 +1,6 @@
-# Gr8Tutor is a digital marketplace dedicated to English language learning. It connects students seeking personalised instruction with a curated network of qualified and experienced tutors. <br>
++# Gr8Tutor is a digital marketplace dedicated to English language learning. It connects students seeking personalised instruction with a curated network of qualified and experienced tutors. <br>
 
-[View Live Site](https://gr8tutor-english-online-5967a17d29d9.herokuapp.com/)    <br>
+[View Live Site](https://gr8tutor-english-online.onrender.com/)    <br>
 [View GitHub Repository](https://github.com/jackpoletek/gr8tutor-english-online) <br>
 
 ![gr8tutor](https://github.com/jackpoletek/gr8tutor-english-online/blob/main/screenshots/home%20page/home%20page_screenshot.jpg)
@@ -79,7 +79,7 @@ The platform focuses on:
 | Testing | Django `unittest` + manual JS tests |
 | Version Control | Git & GitHub |
 | Language | Python 3.10+ |
-| Additional | SweetAlert2, Gunicorn, Whitenoise, Heroku |
+| Additional | SweetAlert2, Gunicorn, Whitenoise, Render |
 
 ---
 
@@ -311,7 +311,7 @@ Ran collectstatic
 - DEBUG=False
 - CSRF protection
 - Hashed passwords
-- HTTPS (Heroku)
+- HTTPS (Render)
 - Django ORM SQL protection
 
 ---
@@ -341,7 +341,7 @@ Ran collectstatic
 ---
 
 ## Deployment
-Deployed on Heroku<br>
+Deployed on Render<br>
 Steps:
 - Create app
 - Add config vars
@@ -349,7 +349,7 @@ Steps:
 - Configure Whitenoise
 - Run migrations
 - Collect static files
-- Push to Heroku
+- Push to Render
 
 ---
 
