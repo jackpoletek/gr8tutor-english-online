@@ -1,4 +1,4 @@
-+# Gr8Tutor is a digital marketplace dedicated to English language learning. It connects students seeking personalised instruction with a curated network of qualified and experienced tutors. <br>
+# Gr8Tutor is a digital marketplace dedicated to English language learning. It connects students seeking personalised instruction with a curated network of qualified and experienced tutors. <br>
 
 [View Live Site](https://gr8tutor-english-online.onrender.com/)    <br>
 [View GitHub Repository](https://github.com/jackpoletek/gr8tutor-english-online) <br>
